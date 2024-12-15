@@ -1,5 +1,5 @@
+import 'package:custom_scroll_view/pages/homepages.dart';
 import 'package:flutter/material.dart';
-import 'package:practice_08/pages/homepages.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,10 +1,10 @@
+import 'package:custom_scroll_view/data/product.dart';
+import 'package:custom_scroll_view/data/product_type.dart';
+import 'package:custom_scroll_view/data/slide.dart';
+import 'package:custom_scroll_view/models/products.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:practice_08/data/product.dart';
-import 'package:practice_08/data/product_type.dart';
-import 'package:practice_08/data/slide.dart';
-import 'package:practice_08/models/products.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
