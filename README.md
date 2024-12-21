@@ -3,13 +3,16 @@
 A new Flutter project.
 
 ## Getting Started
+ - Run Flutter pub get
 
-This project is a starting point for a Flutter application.
+### HomeScreen 
+ <img src="lib/data/screenshotsPicture/HomeScreen.png"/>
 
-A few resources to get you started if this is your first Flutter project:
+### Product Detail Screen 
+ <img src="lib/data/screenshotsPicture/ProductDetail.png"/>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Product Category View 
+ <img src="lib/data/screenshotsPicture/ProductCategoryView.png"/>
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
