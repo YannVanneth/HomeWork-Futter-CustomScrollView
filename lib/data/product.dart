@@ -16,7 +16,7 @@ const List<Map<String, dynamic>> products = [
     "rating": null,
     "category": null,
     "product_type": "blush",
-    "tag_list": [],
+    "tag_list": ["Apple", "Banana"],
     "created_at": "2017-12-24T02:28:47.814Z",
     "updated_at": "2017-12-24T02:30:48.645Z",
     "product_api_url":

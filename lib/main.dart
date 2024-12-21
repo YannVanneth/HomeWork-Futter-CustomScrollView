@@ -1,4 +1,4 @@
-import 'package:custom_scroll_view/pages/homepages.dart';
+import 'package:custom_scroll_view/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,8 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePageScreen(),
+      initialRoute: Routes.home,
+      routes: routes,
     );
   }
 }

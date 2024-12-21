@@ -1,10 +1,4 @@
-import 'package:custom_scroll_view/data/product.dart';
-import 'package:custom_scroll_view/data/product_type.dart';
-import 'package:custom_scroll_view/data/slide.dart';
-import 'package:custom_scroll_view/models/products.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:custom_scroll_view/data/exports.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -24,6 +18,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
         .toList();
   }
 
+  var indicator = 0;
+
   @override
   void initState() {
     super.initState();
@@ -38,42 +34,42 @@ class _HomePageScreenState extends State<HomePageScreen> {
         child: Center(
           child: CustomScrollView(
             slivers: [
-              SliverAppBar(
-                expandedHeight: 40,
-                title: Text("Type : $typeSelected"),
-                actions: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text("Total items: ${filters.length}"),
-                  ),
-                ],
-              ),
               SliverToBoxAdapter(
-                child: FlutterCarousel(
-                  options: FlutterCarouselOptions(
-                    enableInfiniteScroll: true,
-                    height: MediaQuery.sizeOf(context).height * 0.3,
-                    viewportFraction: 1,
-                    showIndicator: true,
-                    autoPlay: true,
-                    slideIndicator: CircularSlideIndicator(),
+                  child: Stack(
+                children: [
+                  CarouselSlider.builder(
+                    itemCount: slidesCarousel.length,
+                    itemBuilder: (context, index, realIndex) {
+                      return Image.network(
+                        slidesCarousel[index],
+                        errorBuilder: (context, error, stackTrace) =>
+                            ProductDetailsPageState().error404(),
+                      );
+                    },
+                    options: CarouselOptions(
+                      autoPlay: true,
+                      autoPlayCurve: Curves.decelerate,
+                      viewportFraction: 1,
+                      enableInfiniteScroll: true,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      onPageChanged: (index, reason) =>
+                          setState(() => indicator = index),
+                    ),
                   ),
-                  items: slidesCarousel.map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(i),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
+                  Positioned(
+                    left: MediaQuery.sizeOf(context).width / 2 - 25,
+                    bottom: 5,
+                    child: AnimatedSmoothIndicator(
+                      effect: ExpandingDotsEffect(
+                        dotColor: Colors.grey,
+                        activeDotColor: Colors.red,
+                      ),
+                      activeIndex: indicator,
+                      count: slidesCarousel.length,
+                    ),
+                  )
+                ],
+              )),
               SliverToBoxAdapter(
                 child: Container(
                   margin: EdgeInsets.all(15),
@@ -94,11 +90,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
                           scrollDirection: Axis.horizontal,
                           itemCount: productType.length,
                           itemBuilder: (context, index) => GestureDetector(
-                              onTap: () => setState(() {
-                                    typeSelected = productType[index]['title']!;
-                                    filterProduct();
-                                  }),
-                              child: categoryList(index: index)),
+                            onTap: () => setState(() {
+                              typeSelected = productType[index]['title']!;
+                              filterProduct();
+
+                              Navigator.pushNamed(
+                                context,
+                                Routes.category,
+                                arguments: filters,
+                              );
+                            }),
+                            child: ViewCategoryPageState()
+                                .categoryList(index: index),
+                          ),
                           separatorBuilder: (context, index) => SizedBox(
                             width: 10,
                           ),
@@ -109,105 +113,28 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 ),
               ),
               SliverGrid.builder(
-                itemCount: filters.length,
+                itemCount: products.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: 0.7, crossAxisCount: 2),
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 0.7,
+                    crossAxisCount: 2),
                 itemBuilder: (context, index) {
-                  var product = Product.fromJson(filters[index]);
-                  return productCard(context,
-                      cardImage: product.featureImageUrl,
-                      title: product.name,
-                      description: product.description,
-                      price: "${product.currencySign}${product.price}");
+                  var product = Product.fromJson(products[index]);
+                  return GestureDetector(
+                    onTap: () => Navigator.pushNamed(
+                        context, Routes.detailProduct,
+                        arguments: products[index]),
+                    child: ViewCategoryPageState().productCard(context,
+                        cardImage: product.featureImageUrl,
+                        title: product.name,
+                        description: product.description,
+                        price: "${product.currencySign}${product.price}"),
+                  );
                 },
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget categoryList({int index = 0, double size = 60}) {
-    return Column(
-      children: [
-        SizedBox(
-          height: size,
-          width: size,
-          child: SvgPicture.network(
-            (productType[index]['image'] ?? ""),
-            fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(
-                productType[index]['title'] == typeSelected
-                    ? Colors.blue
-                    : Colors.black,
-                BlendMode.srcIn),
-          ),
-        ),
-        Text(
-          productType[index]['title'] ?? "",
-          style: TextStyle(
-              color: productType[index]['title'] == typeSelected
-                  ? Colors.blue
-                  : Colors.black),
-        )
-      ],
-    );
-  }
-
-  Widget productCard(BuildContext context,
-      {String? cardImage, String? title, String? description, String? price}) {
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.contain,
-                    image: NetworkImage(
-                      cardImage ?? "",
-                    )),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title ?? "Header",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  description == ""
-                      ? "Doesn't have desciption"
-                      : description ?? "",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  "Price $price",
-                  style:
-                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          )
-        ],
       ),
     );
   }
