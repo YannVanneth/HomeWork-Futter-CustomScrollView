@@ -1,5 +1,4 @@
-import 'package:custom_scroll_view/routes/routes.dart';
-import 'package:flutter/material.dart';
+import 'package:custom_scroll_view/data/exports.dart';
 
 void main() {
   runApp(const MyApp());

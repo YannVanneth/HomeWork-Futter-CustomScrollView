@@ -43,7 +43,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       return Image.network(
                         slidesCarousel[index],
                         errorBuilder: (context, error, stackTrace) =>
-                            ProductDetailsPageState().error404(),
+                            CustomWidgets().error404(),
                       );
                     },
                     options: CarouselOptions(
@@ -100,8 +100,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                                 arguments: filters,
                               );
                             }),
-                            child: ViewCategoryPageState()
-                                .categoryList(index: index),
+                            child: CustomWidgets().categoryList(index: index),
                           ),
                           separatorBuilder: (context, index) => SizedBox(
                             width: 10,
@@ -124,7 +123,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     onTap: () => Navigator.pushNamed(
                         context, Routes.detailProduct,
                         arguments: products[index]),
-                    child: ViewCategoryPageState().productCard(context,
+                    child: CustomWidgets().productCard(context,
                         cardImage: product.featureImageUrl,
                         title: product.name,
                         description: product.description,

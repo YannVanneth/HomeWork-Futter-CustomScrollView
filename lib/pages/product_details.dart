@@ -28,7 +28,7 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
       ),
       body: Column(
         children: [
-          productImage(context, product),
+          CustomWidgets().productImage(context, product),
           Expanded(child: productDetails(context, product, itemData)),
         ],
       ),
@@ -98,7 +98,8 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
                               .split(',')
                               .first
                               .replaceFirst("#", "0xFF");
-                          return colorBox(color: Color(int.parse(color)));
+                          return CustomWidgets()
+                              .colorBox(color: Color(int.parse(color)));
                         },
                         separatorBuilder: (context, index) => SizedBox(
                               width: 10,
@@ -108,148 +109,35 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
                 else
                   SizedBox(
                     width: MediaQuery.sizeOf(context).width * 0.3,
-                    child: itemTags(tagName: "Unknow Color"),
+                    child: CustomWidgets().itemTags(tagName: "Unknow Color"),
                   )
               ],
             ),
           ),
-          productTags(product),
+          CustomWidgets().productTags(product),
           Column(
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Description:", style: TextStyle(fontSize: 18)),
+              Text(
+                "Description:",
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.start,
+              ),
               Text(
                 product.description.isNotEmpty
                     ? product.description
                     : "Unknown",
                 maxLines: 6,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 16),
               ),
             ],
           ),
-          bottomArea(context),
+          CustomWidgets().bottomArea(context, product),
         ],
       ),
-    );
-  }
-
-  Widget bottomArea(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.60,
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(),
-              backgroundColor: Colors.white,
-            ),
-            child: Text(
-              "Add to cart",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.30,
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(),
-              backgroundColor: Colors.black,
-            ),
-            child: Text(
-              "Add to cart",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget productTags(Product product) {
-    return Column(
-      spacing: 10,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Tags", style: TextStyle(fontSize: 18)),
-        SizedBox(
-          height: 35,
-          child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                var tag = product.tagName;
-
-                return tag.isNotEmpty
-                    ? itemTags(tagName: tag[index], backgroundColor: Colors.red)
-                    : itemTags(tagName: "Unknown");
-              },
-              separatorBuilder: (context, index) => SizedBox(
-                    width: 8,
-                  ),
-              itemCount:
-                  product.tagName.isNotEmpty ? product.tagName.length : 1),
-        )
-      ],
-    );
-  }
-
-  Widget itemTags(
-      {String tagName = "Tag",
-      Color backgroundColor = Colors.grey,
-      Color foregroundColor = Colors.white}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.all(
-          Radius.circular(5),
-        ),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: Center(
-        child: Text(
-          tagName,
-          style: TextStyle(fontWeight: FontWeight.bold, color: foregroundColor),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-    );
-  }
-
-  Widget colorBox({double size = 50, Color color = Colors.amberAccent}) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(4),
-        ),
-        color: color,
-      ),
-    );
-  }
-
-  Widget productImage(BuildContext context, Product product) {
-    return Container(
-      color: Colors.white,
-      height: MediaQuery.sizeOf(context).height * 0.30,
-      width: double.infinity,
-      child: Image.network(
-        product.featureImageUrl,
-        errorBuilder: (context, error, stackTrace) => error404(),
-      ),
-    );
-  }
-
-  Widget error404({String errorMessage = "Error Image"}) {
-    return Row(
-      spacing: 10,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Icon(Icons.error), Text(errorMessage)],
     );
   }
 }
