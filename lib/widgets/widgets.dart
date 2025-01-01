@@ -1,9 +1,9 @@
 import 'package:custom_scroll_view/data/exports.dart';
 
 class CustomWidgets {
-  const CustomWidgets();
+  CustomWidgets._();
 
-  Widget productCard(BuildContext context,
+  static Widget productCard(BuildContext context,
       {String? cardImage, String? title, String? description, String? price}) {
     return SizedBox(
       child: Column(
@@ -64,7 +64,7 @@ class CustomWidgets {
     );
   }
 
-  Widget categoryList({int index = 0, double size = 60}) {
+  static Widget categoryList({int index = 0, double size = 60}) {
     return Column(
       children: [
         SizedBox(
@@ -83,7 +83,7 @@ class CustomWidgets {
     );
   }
 
-  Widget loadShimmer() {
+  static Widget loadShimmer() {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
@@ -96,7 +96,7 @@ class CustomWidgets {
     );
   }
 
-  Widget productTags(Product product) {
+  static Widget productTags(Product product) {
     return Column(
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +123,7 @@ class CustomWidgets {
     );
   }
 
-  Widget itemTags(
+  static Widget itemTags(
       {String tagName = "Tag",
       Color backgroundColor = Colors.grey,
       Color foregroundColor = Colors.white}) {
@@ -145,11 +145,19 @@ class CustomWidgets {
     );
   }
 
-  Widget colorBox({double size = 50, Color color = Colors.amberAccent}) {
+  static Widget colorBox(
+      {double size = 50,
+      Color color = Colors.amberAccent,
+      bool border = false}) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
+        border: border
+            ? Border.all(
+                width: 3,
+              )
+            : null,
         borderRadius: BorderRadius.all(
           Radius.circular(4),
         ),
@@ -158,7 +166,7 @@ class CustomWidgets {
     );
   }
 
-  Widget productImage(BuildContext context, Product product) {
+  static Widget productImage(BuildContext context, Product product) {
     return Container(
       color: Colors.white,
       height: MediaQuery.sizeOf(context).height * 0.30,
@@ -170,7 +178,7 @@ class CustomWidgets {
     );
   }
 
-  Widget error404({String errorMessage = "Error Image"}) {
+  static Widget error404({String errorMessage = "Error Image"}) {
     return Row(
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -178,15 +186,15 @@ class CustomWidgets {
     );
   }
 
-  Widget bottomArea(BuildContext context, Product product) {
+  static Widget bottomArea(BuildContext context, Map<String, dynamic> item,
+      String isSelectedColor, int numberOfItems) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
           width: MediaQuery.sizeOf(context).width * 0.60,
           child: OutlinedButton(
-            onPressed: () => Navigator.pushNamed(context, Routes.buyNowPage,
-                arguments: product),
+            onPressed: () {},
             style: OutlinedButton.styleFrom(
               shape: RoundedRectangleBorder(),
               backgroundColor: Colors.white,
@@ -200,8 +208,32 @@ class CustomWidgets {
         SizedBox(
           width: MediaQuery.sizeOf(context).width * 0.30,
           child: OutlinedButton(
-            onPressed: () => Navigator.pushNamed(context, Routes.buyNowPage,
-                arguments: product),
+            onPressed: () {
+              if (isSelectedColor.isNotEmpty ||
+                  Product.fromJson(item).colors.isEmpty) {
+                Navigator.pushNamed(context, Routes.buyNowPage,
+                    arguments: [item, isSelectedColor, numberOfItems]);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.red,
+                  content: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        Icons.error,
+                        color: Colors.white,
+                      ),
+                      Text("Please select color",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18)),
+                    ],
+                  ),
+                  shape: RoundedRectangleBorder(),
+                ));
+              }
+            },
             style: OutlinedButton.styleFrom(
               shape: RoundedRectangleBorder(),
               backgroundColor: Colors.black,
@@ -213,6 +245,77 @@ class CustomWidgets {
           ),
         )
       ],
+    );
+  }
+
+  static Future inputField(BuildContext context,
+      {String title = "Contact Number",
+      String hintText = "Enter your contact number",
+      Icon prefixIcon = const Icon(Icons.phone),
+      TextInputType typeInput = TextInputType.text}) {
+    return showModalBottomSheet(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      context: context,
+      builder: (context) => Container(
+        height: MediaQuery.sizeOf(context).height * 0.25,
+        padding: EdgeInsets.all(15),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              spacing: 10,
+              children: [
+                prefixIcon,
+                Text(title.toUpperCase(),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            TextField(
+              keyboardType: typeInput,
+              decoration: InputDecoration(
+                hintText: hintText,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2)),
+                    backgroundColor: Colors.black),
+                child: Text(
+                  "Save",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget bottomNavigationBar(int index, Function(int) value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: BottomNavigationBar(
+        currentIndex: index,
+        onTap: value,
+        landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: "Wishlist"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: "Settings"),
+        ],
+      ),
     );
   }
 }

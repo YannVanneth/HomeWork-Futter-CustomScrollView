@@ -19,6 +19,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   var indicator = 0;
+  var currentIndex = 0;
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       return Image.network(
                         slidesCarousel[index],
                         errorBuilder: (context, error, stackTrace) =>
-                            CustomWidgets().error404(),
+                            CustomWidgets.error404(),
                       );
                     },
                     options: CarouselOptions(
@@ -57,7 +58,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     ),
                   ),
                   Positioned(
-                    left: MediaQuery.sizeOf(context).width / 2 - 25,
+                    left: MediaQuery.sizeOf(context).width / 2 -
+                        (slidesCarousel.length * 10),
                     bottom: 5,
                     child: AnimatedSmoothIndicator(
                       effect: ExpandingDotsEffect(
@@ -100,7 +102,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                                 arguments: filters,
                               );
                             }),
-                            child: CustomWidgets().categoryList(index: index),
+                            child: CustomWidgets.categoryList(index: index),
                           ),
                           separatorBuilder: (context, index) => SizedBox(
                             width: 10,
@@ -122,8 +124,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   return GestureDetector(
                     onTap: () => Navigator.pushNamed(
                         context, Routes.detailProduct,
-                        arguments: products[index]),
-                    child: CustomWidgets().productCard(context,
+                        arguments: [products[index]]),
+                    child: CustomWidgets.productCard(context,
                         cardImage: product.featureImageUrl,
                         title: product.name,
                         description: product.description,
@@ -135,6 +137,15 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
         ),
       ),
+      bottomNavigationBar: CustomWidgets.bottomNavigationBar(
+          currentIndex,
+          (value) => setState(() {
+                currentIndex = value;
+
+                if (currentIndex == 1) {
+                  Navigator.pushNamed(context, Routes.locationScreen);
+                }
+              })),
     );
   }
 }

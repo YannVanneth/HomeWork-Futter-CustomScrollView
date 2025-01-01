@@ -24,9 +24,11 @@ class Product {
 }
 
 class ProductColor {
-  late String name;
+  late String colorCode;
+  late String colorName;
 
   ProductColor.fromJson(Map<String, dynamic> data) {
-    name = data['hex_value'] ?? "";
+    colorCode = data['hex_value'] ?? "";
+    colorName = data['colour_name'] ?? "";
   }
 }

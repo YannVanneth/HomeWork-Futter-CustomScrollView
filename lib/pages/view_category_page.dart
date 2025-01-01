@@ -45,7 +45,7 @@ class _ViewCategoryPageState extends State<ViewCategoryPage> {
                         onTap: () => Navigator.pushNamed(
                             context, Routes.detailProduct,
                             arguments: filters[index]),
-                        child: CustomWidgets().productCard(context,
+                        child: CustomWidgets.productCard(context,
                             cardImage: product.featureImageUrl,
                             title: product.name,
                             description: product.description,
@@ -56,7 +56,7 @@ class _ViewCategoryPageState extends State<ViewCategoryPage> {
                 ],
               )
             : Center(
-                child: CustomWidgets().error404(errorMessage: "Data not found"),
+                child: CustomWidgets.error404(errorMessage: "Data not found"),
               ),
       ),
     );

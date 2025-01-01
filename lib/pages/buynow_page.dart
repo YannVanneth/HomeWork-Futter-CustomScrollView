@@ -1,18 +1,44 @@
 import 'package:custom_scroll_view/data/exports.dart';
 
-class BuyNowPage extends StatelessWidget {
+class BuyNowPage extends StatefulWidget {
   const BuyNowPage({super.key});
 
   @override
+  State<BuyNowPage> createState() => _BuyNowPageState();
+}
+
+class _BuyNowPageState extends State<BuyNowPage> {
+  int numberOfItmes = 1;
+
+  @override
   Widget build(BuildContext context) {
-    var products = ModalRoute.of(context)?.settings.arguments as Product;
+    var products = ModalRoute.of(context)?.settings.arguments as List<dynamic>;
+
+    var product = Product.fromJson(products[0] as Map<String, dynamic>);
+    var color = products[1];
+
+    double updatePrice({int? amount}) {
+      amount = amount ?? 0;
+
+      return amount * double.parse(product.price);
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text("Orders"),
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context, [
+            products[0] as Map<String, dynamic>,
+            numberOfItmes,
+          ]),
+          child: Icon(Icons.arrow_back),
+        ),
+        title: Text(
+          "Orders",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -22,36 +48,72 @@ class BuyNowPage extends StatelessWidget {
           child: Column(
             spacing: 20,
             children: [
-              listItems(
-                  title: Text("Delivery Location"),
-                  description: Text("42 St 606, Phnom Penh")),
-              listItems(
-                  leading: Icon(Icons.phone),
-                  title: Text("Contact Number"),
-                  description: Text("Enter your contact number")),
+              GestureDetector(
+                onTap: () =>
+                    Navigator.pushNamed(context, Routes.locationScreen),
+                child: listItems(
+                    title: Text(
+                      "Delivery Location",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    description: Text("42 St 606, Phnom Penh")),
+              ),
+              GestureDetector(
+                onTap: () => CustomWidgets.inputField(context),
+                child: listItems(
+                    leading: Icon(Icons.phone),
+                    title:
+                        Text("Contact Number", style: TextStyle(fontSize: 18)),
+                    description: Text("Enter your contact number")),
+              ),
               listItems(
                   leading: Image.asset(
                     "assets/icons/Cash in Hand.png",
                   ),
-                  title: Text("Payment"),
+                  title: Text("Payment", style: TextStyle(fontSize: 18)),
                   description: Text("Cash on delivery")),
               listItems(
-                title: Text(products.name),
+                title: Text(product.name,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    )),
                 description: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Price ${products.currencySign}${products.price}"),
-                    Text("Color :"),
+                    Text("Price : ${product.currencySign}${product.price}",
+                        style: TextStyle(fontSize: 16)),
+                    Text("Color : $color", style: TextStyle(fontSize: 16)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        GestureDetector(
+                          onTap: () => setState(() {
+                            numberOfItmes++;
+                            updatePrice(amount: numberOfItmes);
+                          }),
+                          child: boxButton(
+                              child: Icon(
+                            Icons.add,
+                            size: 20,
+                          )),
+                        ),
                         boxButton(
-                            child: Icon(
-                          Icons.add,
-                          size: 20,
-                        )),
-                        boxButton(),
-                        boxButton(child: Icon(Icons.remove, size: 20)),
+                          child: Text(
+                            numberOfItmes.toString(),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => setState(() {
+                            if (numberOfItmes > 1) {
+                              numberOfItmes--;
+                              updatePrice(amount: numberOfItmes);
+                            }
+                          }),
+                          child: boxButton(
+                            child: Icon(Icons.remove, size: 20),
+                          ),
+                        ),
                       ],
                     )
                   ],
@@ -59,14 +121,20 @@ class BuyNowPage extends StatelessWidget {
                 leading: SizedBox(
                   height: 120,
                   child: productPicture(
-                    image: NetworkImage(products.featureImageUrl),
+                    image: NetworkImage(product.featureImageUrl),
                   ),
                 ),
               ),
-              listItems(
-                leading: Image.asset("assets/icons/Voucher.png"),
-                title: Text("Coupons"),
-                description: Text("Enter code to get discount"),
+              GestureDetector(
+                onTap: () => CustomWidgets.inputField(context,
+                    title: "Coupons Code",
+                    hintText: "Enter Your Coupons Code",
+                    prefixIcon: Icon(Icons.code)),
+                child: listItems(
+                  leading: Image.asset("assets/icons/Voucher.png"),
+                  title: Text("Coupons", style: TextStyle(fontSize: 18)),
+                  description: Text("Enter code to get discount"),
+                ),
               ),
               Expanded(
                 child: listItems(
@@ -77,7 +145,8 @@ class BuyNowPage extends StatelessWidget {
                         spacing: 10,
                         children: [
                           Image.asset("assets/icons/Purchase Order.png"),
-                          Text("Order Summary (2 items)"),
+                          Text("Order Summary (2 items)",
+                              style: TextStyle(fontSize: 18)),
                         ],
                       ),
                       SizedBox(
@@ -92,8 +161,10 @@ class BuyNowPage extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Sub total"),
-                                Text("Sub total"),
+                                Text("Sub total",
+                                    style: TextStyle(fontSize: 16)),
+                                Text("Sub total",
+                                    style: TextStyle(fontSize: 16)),
                               ],
                             ),
                           ),
@@ -102,8 +173,10 @@ class BuyNowPage extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Discount"),
-                                Text("---------"),
+                                Text("Discount",
+                                    style: TextStyle(fontSize: 16)),
+                                Text("---------",
+                                    style: TextStyle(fontSize: 16)),
                               ],
                             ),
                           ),
@@ -112,8 +185,10 @@ class BuyNowPage extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Total"),
-                                Text("US \$23"),
+                                Text("Total", style: TextStyle(fontSize: 16)),
+                                Text(
+                                    "${product.currencySign}${updatePrice(amount: numberOfItmes)}",
+                                    style: TextStyle(fontSize: 16)),
                               ],
                             ),
                           ),
@@ -131,7 +206,7 @@ class BuyNowPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "US \$23",
+                      "${product.currencySign}${updatePrice(amount: numberOfItmes)}",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -154,10 +229,6 @@ class BuyNowPage extends StatelessWidget {
           ),
         ),
       ),
-      // bottomNavigationBar: Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      //   child: ProductDetailsPageState().bottomArea(context, products),
-      // ),
     );
   }
 

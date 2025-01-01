@@ -8,12 +8,20 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class ProductDetailsPageState extends State<ProductDetailsPage> {
+  var isSelectedColor = "";
+  late Map<String, dynamic> item;
+  int numberOfItems = 1;
+
   @override
   Widget build(BuildContext context) {
-    var itemData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    var itemData = ModalRoute.of(context)?.settings.arguments as List;
 
-    var product = Product.fromJson(itemData);
+    item = itemData[0] as Map<String, dynamic>;
+    var product = Product.fromJson(item);
+
+    if (itemData.length == 2) {
+      numberOfItems = itemData[1] as int;
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -28,8 +36,8 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
       ),
       body: Column(
         children: [
-          CustomWidgets().productImage(context, product),
-          Expanded(child: productDetails(context, product, itemData)),
+          CustomWidgets.productImage(context, product),
+          Expanded(child: productDetails(context, product, item)),
         ],
       ),
     );
@@ -84,7 +92,7 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Color: ",
+                  "Color: ${isSelectedColor.isEmpty && product.colors.isEmpty ? "Not found" : isSelectedColor.isEmpty ? "Please select color" : isSelectedColor ?? ""}",
                   style: TextStyle(fontSize: 18),
                 ),
                 if (product.colors.isNotEmpty)
@@ -93,13 +101,25 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
                     child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          var color = product.colors[index].name
+                          var color = product.colors[index].colorCode
                               .replaceFirst("#", "0xFF")
                               .split(',')
                               .first
                               .replaceFirst("#", "0xFF");
-                          return CustomWidgets()
-                              .colorBox(color: Color(int.parse(color)));
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isSelectedColor =
+                                    product.colors[index].colorName;
+                              });
+                            },
+                            child: CustomWidgets.colorBox(
+                                border: isSelectedColor ==
+                                        product.colors[index].colorName
+                                    ? true
+                                    : false,
+                                color: Color(int.parse(color))),
+                          );
                         },
                         separatorBuilder: (context, index) => SizedBox(
                               width: 10,
@@ -109,12 +129,12 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
                 else
                   SizedBox(
                     width: MediaQuery.sizeOf(context).width * 0.3,
-                    child: CustomWidgets().itemTags(tagName: "Unknow Color"),
+                    child: CustomWidgets.itemTags(tagName: "Unknow Color"),
                   )
               ],
             ),
           ),
-          CustomWidgets().productTags(product),
+          CustomWidgets.productTags(product),
           Column(
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +155,8 @@ class ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ],
           ),
-          CustomWidgets().bottomArea(context, product),
+          CustomWidgets.bottomArea(
+              context, item, isSelectedColor, numberOfItems)
         ],
       ),
     );
