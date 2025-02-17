@@ -34,6 +34,20 @@ class Product {
         .map((e) => ProductColor.fromJson(e))
         .toList();
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'product_type': type,
+      'price': price,
+      'api_featured_image': featureImageUrl,
+      'price_sign': currencySign,
+      'tag_list': tagName.map((e) => e.toString()).toList(),
+      'product_colors': colors.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 class ProductColor {
@@ -43,5 +57,12 @@ class ProductColor {
   ProductColor.fromJson(Map<String, dynamic> data) {
     colorCode = data['hex_value'] ?? "";
     colorName = data['colour_name'] ?? "";
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'hex_value': colorCode,
+      'colour_name': colorName,
+    };
   }
 }

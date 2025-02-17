@@ -1,18 +1,21 @@
+// import 'package:custom_scroll_view/databases/databases_helper.dart';
+
 import '../../models/products.dart';
 
 // Base class for events
 abstract class WishlistEvent {}
 
-// Event to fetch wishlist items
-class LoadWishlist extends WishlistEvent {}
+class LoadWishlist extends WishlistEvent {
+  final List<Product> wishlist;
 
-// Event to add an item to the wishlist
+  LoadWishlist(this.wishlist);
+}
+
 class AddToWishlist extends WishlistEvent {
   final Product product;
   AddToWishlist(this.product);
 }
 
-// Event to remove an item from the wishlist
 class RemoveFromWishlist extends WishlistEvent {
   final Product product;
   RemoveFromWishlist(this.product);

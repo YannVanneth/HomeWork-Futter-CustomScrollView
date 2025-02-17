@@ -4,27 +4,26 @@ import 'package:path/path.dart' as path;
 class DatabasesHelper {
   DatabasesHelper._();
 
-  static final _dbHelper = DatabasesHelper._();
-  Database? _db;
-
-  DatabasesHelper get db {
-    if (_db != null) {
-      return _dbHelper;
-    } else {
-      init();
-      return _dbHelper;
-    }
-  }
+  static final dbHelper = DatabasesHelper._();
+  Database? db;
 
   void init() async {
-    _db = await openDatabase(
+    db = await openDatabase(
       path.join(await getDatabasesPath(), 'YannVanneth.db'),
+      version: 1,
       onCreate: (db, version) {
         if (version == 1) {
           db.execute('''
             CREATE TABLE wishlists(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              product_id INTEGER
+              name TEXT,
+              description TEXT,
+              product_type TEXT,
+              price TEXT,
+              api_featured_image TEXT,
+              price_sign TEXT,
+              tag_list TEXT,
+              product_colors TEXT
             )
            ''');
 

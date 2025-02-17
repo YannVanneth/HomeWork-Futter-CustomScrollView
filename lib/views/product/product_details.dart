@@ -1,6 +1,7 @@
 import 'package:custom_scroll_view/bloc/detail_screen/detail_screen_bloc.dart';
 import 'package:custom_scroll_view/bloc/detail_screen/detail_screen_event.dart';
 import 'package:custom_scroll_view/bloc/detail_screen/detail_screen_state.dart';
+import 'package:custom_scroll_view/databases/databases_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:custom_scroll_view/data/exports.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -86,16 +87,20 @@ class ProductDetailContent extends StatelessWidget {
                     ),
                   ),
                   Bounceable(
-                    onTap: () {
-                      readFromSharedPreferences().then((value) {
-                        List<String> wishlist = value;
-                        if (wishlist.contains(product.featureImageUrl)) {
-                          wishlist.remove(product.featureImageUrl);
-                        } else {
-                          wishlist.add(product.featureImageUrl);
-                        }
-                        writeToSharedPreferences(wishlist);
-                      });
+                    onTap: () async {
+                      var wishlist = await readFromSharedPreferences();
+                      if (wishlist.contains(product.featureImageUrl)) {
+                        wishlist.remove(product.featureImageUrl);
+                        await DatabasesHelper.dbHelper.db!.delete('wishlists',
+                            where: 'api_featured_image = ?',
+                            whereArgs: [product.featureImageUrl]);
+                      } else {
+                        wishlist.add(product.featureImageUrl);
+                        await DatabasesHelper.dbHelper.db!
+                            .insert('wishlists', product.toJson());
+                      }
+
+                      await writeToSharedPreferences(wishlist);
 
                       CustomWidgets.showMessageSnakeBar(
                           message: state.isFavorite

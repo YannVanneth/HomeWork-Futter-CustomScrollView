@@ -16,6 +16,10 @@ class HomeView extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.white,
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: const Text('Custom Scroll View'),
+            ),
             body: SafeArea(
               child: IndexedStack(
                 index: state,
