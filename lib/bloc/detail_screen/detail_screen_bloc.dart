@@ -27,5 +27,11 @@ class DetailScreenBloc extends Bloc<DetailScreenEvent, DetailScreenState> {
         emit(state.copyWith(isExpanded: event.isExpanded));
       },
     );
+
+    on<LoadDetailScreen>(
+      (event, emit) {
+        emit(state.copyWith(product: event.product));
+      },
+    );
   }
 }

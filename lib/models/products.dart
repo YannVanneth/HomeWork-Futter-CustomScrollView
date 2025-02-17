@@ -9,6 +9,18 @@ class Product {
   late List<String> tagName;
   late List<ProductColor> colors;
 
+  Product({
+    this.id = 1,
+    this.name = '',
+    this.description = '',
+    this.type = '',
+    this.currencySign = '',
+    this.price = '',
+    this.featureImageUrl = '',
+    this.tagName = const [],
+    this.colors = const [],
+  });
+
   Product.fromJson(Map<String, dynamic> data) {
     id = data['id'] ?? 1;
     name = data['name'] ?? "";

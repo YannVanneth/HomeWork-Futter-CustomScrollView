@@ -1,4 +1,5 @@
 import 'package:custom_scroll_view/data/exports.dart';
+import 'package:custom_scroll_view/models/detail_product.dart';
 
 class CustomWidgets {
   CustomWidgets._();
@@ -186,8 +187,8 @@ class CustomWidgets {
     );
   }
 
-  static Widget bottomArea(BuildContext context, Map<String, dynamic> item,
-      String isSelectedColor, int numberOfItems) {
+  static Widget bottomArea(
+      BuildContext context, Product item, String isSelectedColor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -209,10 +210,14 @@ class CustomWidgets {
           width: MediaQuery.sizeOf(context).width * 0.30,
           child: OutlinedButton(
             onPressed: () {
-              if (isSelectedColor.isNotEmpty ||
-                  Product.fromJson(item).colors.isEmpty) {
+              if (isSelectedColor.isNotEmpty || item.colors.isEmpty) {
                 Navigator.pushNamed(context, Routes.buyNowPage,
-                    arguments: [item, isSelectedColor, numberOfItems]);
+                    arguments: DetailProduct(
+                        name: item.name,
+                        image: item.featureImageUrl,
+                        price: double.parse(item.price),
+                        currency: item.currencySign,
+                        quantity: 0));
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   backgroundColor: Colors.red,
@@ -347,5 +352,18 @@ class CustomWidgets {
         ],
       ),
     );
+  }
+
+  static dynamic showMessageSnakeBar(
+      {required String message,
+      required BuildContext context,
+      Color? backgroundColor}) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: backgroundColor ?? Colors.blue,
+    ));
   }
 }

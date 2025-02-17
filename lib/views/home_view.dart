@@ -15,6 +15,7 @@ class HomeView extends StatelessWidget {
       child: BlocBuilder<MainScreenBloc, int>(
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Colors.white,
             body: SafeArea(
               child: IndexedStack(
                 index: state,
@@ -22,6 +23,7 @@ class HomeView extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: Colors.white,
               currentIndex: state,
               onTap: (index) =>
                   context.read<MainScreenBloc>().changeIndex(index),
