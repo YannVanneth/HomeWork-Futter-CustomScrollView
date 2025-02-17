@@ -19,8 +19,8 @@ export 'package:custom_scroll_view/data/product_type.dart';
 export 'package:custom_scroll_view/data/slide.dart';
 
 // Other Exported Pages
-export 'package:custom_scroll_view/pages/product_details.dart';
-export 'package:custom_scroll_view/pages/view_category_page.dart';
+export 'package:custom_scroll_view/views/product/product_details.dart';
+export 'package:custom_scroll_view/views/product/view_category_page.dart';
 
 // Widgets class
 export 'package:custom_scroll_view/widgets/widgets.dart';

@@ -1,9 +1,9 @@
-import 'package:custom_scroll_view/pages/buynow_page.dart';
-import 'package:custom_scroll_view/pages/homepages.dart';
-import 'package:custom_scroll_view/pages/product_details.dart';
-import 'package:custom_scroll_view/pages/view_category_page.dart';
+import 'package:custom_scroll_view/views/buy_now/buynow_page.dart';
+import 'package:custom_scroll_view/views/home_view.dart';
+import 'package:custom_scroll_view/views/product/product_details.dart';
+import 'package:custom_scroll_view/views/product/view_category_page.dart';
 
-import '../pages/map_screen.dart';
+import '../views/map_screen/map_screen.dart';
 
 class Routes {
   static const String home = '/home_view';
@@ -14,7 +14,7 @@ class Routes {
 }
 
 var routes = {
-  Routes.home: (context) => HomePageScreen(),
+  Routes.home: (context) => HomeView(),
   Routes.category: (context) => ViewCategoryPage(),
   Routes.detailProduct: (context) => ProductDetailsPage(),
   Routes.buyNowPage: (context) => BuyNowPage(),

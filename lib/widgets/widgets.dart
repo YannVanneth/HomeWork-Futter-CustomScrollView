@@ -252,49 +252,79 @@ class CustomWidgets {
       {String title = "Contact Number",
       String hintText = "Enter your contact number",
       Icon prefixIcon = const Icon(Icons.phone),
-      TextInputType typeInput = TextInputType.text}) {
+      TextInputType typeInput = TextInputType.text,
+      Key? key,
+      Function(String)? function,
+      TextEditingController? controller}) {
+    var ctr = TextEditingController();
     return showModalBottomSheet(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      isScrollControlled: true,
       context: context,
-      builder: (context) => Container(
-        height: MediaQuery.sizeOf(context).height * 0.25,
-        padding: EdgeInsets.all(15),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 10,
-              children: [
-                prefixIcon,
-                Text(title.toUpperCase(),
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ],
-            ),
-            TextField(
-              keyboardType: typeInput,
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: OutlineInputBorder(),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+            bottom: 20 + MediaQuery.of(context).viewInsets.bottom,
+            left: 10,
+            right: 10,
+            top: 20),
+        child: Form(
+          key: key,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title Row
+              Row(
+                children: [
+                  prefixIcon,
+                  const SizedBox(width: 10),
+                  Text(
+                    title.toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(2)),
-                    backgroundColor: Colors.black),
-                child: Text(
-                  "Save",
-                  style: TextStyle(color: Colors.white),
+              const SizedBox(height: 10),
+
+              // Input Field
+              TextFormField(
+                validator: (value) {
+                  if (function != null) {
+                    function;
+                  }
+                },
+                autofocus: true,
+                controller: controller ?? ctr,
+                keyboardType: typeInput,
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  border: const OutlineInputBorder(),
                 ),
               ),
-            )
-          ],
+              const SizedBox(height: 10),
+
+              // Save Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, ctr.text);
+                  }, // Close the bottom sheet
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

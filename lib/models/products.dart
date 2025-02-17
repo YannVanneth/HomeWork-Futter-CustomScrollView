@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Product {
+  late int id;
   late String name;
   late String description;
   late String type;
@@ -10,6 +10,7 @@ class Product {
   late List<ProductColor> colors;
 
   Product.fromJson(Map<String, dynamic> data) {
+    id = data['id'] ?? 1;
     name = data['name'] ?? "";
     description = data['description'] ?? "";
     type = data['product_type'] ?? "";
