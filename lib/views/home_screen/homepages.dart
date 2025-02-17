@@ -104,15 +104,14 @@ class HomePageScreen extends StatelessWidget {
                       ),
                     ),
                     SliverGrid.builder(
-                      itemCount: state.filteredProducts.length,
+                      itemCount: products.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisSpacing: 10,
                         childAspectRatio: 0.7,
                         crossAxisCount: 2,
                       ),
                       itemBuilder: (context, index) {
-                        var product =
-                            Product.fromJson(state.filteredProducts[index]);
+                        var product = Product.fromJson(products[index]);
                         return GestureDetector(
                           onTap: () => Navigator.pushNamed(
                             context,
@@ -135,18 +134,6 @@ class HomePageScreen extends StatelessWidget {
             ),
           ),
         ),
-        // bottomNavigationBar: BlocBuilder<HomeBloc, HomeState>(
-        //   builder: (context, state) {
-        //     return CustomWidgets.bottomNavigationBar(
-        //       0, // Default index, update logic as needed
-        //       (value) {
-        //         if (value == 1) {
-        //           Navigator.pushNamed(context, Routes.locationScreen);
-        //         }
-        //       },
-        //     );
-        //   },
-        // ),
       ),
     );
   }

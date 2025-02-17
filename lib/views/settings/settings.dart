@@ -20,11 +20,11 @@ class Settings extends StatelessWidget {
   Widget profileSection() {
     Widget profile() {
       return Container(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(15),
         decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all()),
         child: Text(
           'net'.toUpperCase(),
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
         ),
       );
     }
@@ -35,7 +35,7 @@ class Settings extends StatelessWidget {
         children: [
           Text(
             name ?? 'John Doe',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 20),
           ),
           Text(
             phoneNumber ?? '0987654334',
@@ -61,13 +61,25 @@ class Settings extends StatelessWidget {
         Column(
           children: [
             ListTile(
-              leading: Icon(Icons.receipt),
-              title: Text('My Orders'),
+              leading: Icon(
+                Icons.receipt,
+                size: 26,
+              ),
+              title: Text(
+                'My Orders',
+                style: TextStyle(fontSize: 20),
+              ),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.language),
-              title: Text('Change Language'),
+              leading: Icon(
+                Icons.language,
+                size: 26,
+              ),
+              title: Text(
+                'Change Language',
+                style: TextStyle(fontSize: 20),
+              ),
               onTap: () {},
             )
           ],
@@ -75,20 +87,35 @@ class Settings extends StatelessWidget {
         Column(
           children: [
             ListTile(
-              leading: Icon(Icons.info),
-              title: Text('About'),
+              leading: Icon(
+                Icons.info,
+                size: 26,
+              ),
+              title: Text(
+                'About',
+                style: TextStyle(fontSize: 20),
+              ),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.privacy_tip_outlined),
-              title: Text('Privacy Policy'),
+              leading: Icon(
+                Icons.privacy_tip_outlined,
+                size: 26,
+              ),
+              title: Text(
+                'Privacy Policy',
+                style: TextStyle(fontSize: 20),
+              ),
               onTap: () {},
             ),
           ],
         ),
         ListTile(
-          leading: Icon(Icons.logout),
-          title: Text('Log out'),
+          leading: Icon(
+            Icons.logout,
+            size: 26,
+          ),
+          title: Text('Log out', style: TextStyle(fontSize: 20)),
           onTap: () async {
             // Perform logout action
             // final pref = await SharedPreferences.getInstance();

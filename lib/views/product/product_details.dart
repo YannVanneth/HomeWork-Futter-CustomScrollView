@@ -4,6 +4,7 @@ import 'package:custom_scroll_view/bloc/detail_screen/detail_screen_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:custom_scroll_view/data/exports.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   const ProductDetailsPage({super.key});
@@ -86,6 +87,16 @@ class ProductDetailContent extends StatelessWidget {
                   ),
                   Bounceable(
                     onTap: () {
+                      readFromSharedPreferences().then((value) {
+                        List<String> wishlist = value;
+                        if (wishlist.contains(product.featureImageUrl)) {
+                          wishlist.remove(product.featureImageUrl);
+                        } else {
+                          wishlist.add(product.featureImageUrl);
+                        }
+                        writeToSharedPreferences(wishlist);
+                      });
+
                       CustomWidgets.showMessageSnakeBar(
                           message: state.isFavorite
                               ? "Remove Success"
@@ -93,6 +104,7 @@ class ProductDetailContent extends StatelessWidget {
                           backgroundColor:
                               state.isFavorite ? Colors.red : Colors.green,
                           context: context);
+
                       return context
                           .read<DetailScreenBloc>()
                           .add(ToggleFavorite(!state.isFavorite));
@@ -192,4 +204,14 @@ class ProductDetailContent extends StatelessWidget {
       },
     );
   }
+}
+
+Future<void> writeToSharedPreferences(List<String> productURL) async {
+  var prefs = await SharedPreferences.getInstance();
+  prefs.setStringList("wishlist", productURL);
+}
+
+Future readFromSharedPreferences() async {
+  var prefs = await SharedPreferences.getInstance();
+  return prefs.getStringList("wishlist") ?? [];
 }
