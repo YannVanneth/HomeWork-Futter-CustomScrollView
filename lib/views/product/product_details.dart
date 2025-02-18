@@ -97,8 +97,7 @@ class ProductDetailContent extends StatelessWidget {
                   Bounceable(
                     onTap: () async {
                       try {
-                        var wishlist = await CustomWidgets.getfavoriteToggle()
-                            as List<String>;
+                        var wishlist = await CustomWidgets.getfavoriteToggle();
 
                         if (wishlist.contains(product.featureImageUrl)) {
                           wishlist.remove(product.featureImageUrl);

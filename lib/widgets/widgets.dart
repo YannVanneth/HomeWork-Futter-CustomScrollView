@@ -374,7 +374,7 @@ class CustomWidgets {
     pref.setStringList('isWish', isWish);
   }
 
-  static getfavoriteToggle() async {
+  static Future<List<String>> getfavoriteToggle() async {
     var pref = await SharedPreferences.getInstance();
     return pref.getStringList('isWish') ?? [];
   }

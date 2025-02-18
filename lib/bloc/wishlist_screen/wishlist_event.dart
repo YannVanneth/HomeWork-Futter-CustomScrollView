@@ -5,11 +5,7 @@ import '../../models/products.dart';
 // Base class for events
 abstract class WishlistEvent {}
 
-class LoadWishlist extends WishlistEvent {
-  final List<Product> wishlist;
-
-  LoadWishlist(this.wishlist);
-}
+class LoadWishlist extends WishlistEvent {}
 
 class AddToWishlist extends WishlistEvent {
   final Product product;

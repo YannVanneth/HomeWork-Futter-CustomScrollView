@@ -1,52 +1,38 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_scroll_view/bloc/wishlist_screen/wishlist_bloc.dart';
+import 'package:custom_scroll_view/bloc/wishlist_screen/wishlist_event.dart';
+import 'package:custom_scroll_view/bloc/wishlist_screen/wishlist_state.dart';
 import 'package:custom_scroll_view/data/exports.dart';
-import 'package:custom_scroll_view/databases/databases_helper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 
-class WishlistScreen extends StatefulWidget {
+class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
 
   @override
-  State<WishlistScreen> createState() => _WishlistScreenState();
-}
-
-class _WishlistScreenState extends State<WishlistScreen> {
-  List<Product> wishlistItems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadWishlist();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: wishlistItems.isNotEmpty
-            ? Column(
-                children: [
-                  Expanded(child: _wishlistItem(wishlistItems)),
-                ],
-              )
-            : _noWishListData(context),
-        // : _noWishListData(context),
-      ),
+    return BlocProvider(
+      create: (context) => WishlistBloc()..add(LoadWishlist()),
+      child:
+          BlocBuilder<WishlistBloc, WishlistState>(builder: (context, state) {
+        var wishlist = [];
+        if (state is WishlistLoaded) {
+          wishlist = state.products;
+        }
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: wishlist.isNotEmpty && state is WishlistLoaded
+                ? Column(
+                    children: [
+                      Expanded(child: _wishlistItem(state.products)),
+                    ],
+                  )
+                : _noWishListData(context),
+          ),
+        );
+      }),
     );
-  }
-
-  Future<void> loadWishlist() async {
-    var items = await DatabasesHelper.dbHelper.db!.rawQuery(
-        'SELECT * FROM wishlists w INNER JOIN products p ON w.product_id = p.id');
-
-    if (items != null) {
-      setState(() {
-        wishlistItems = items.map((e) => Product.fromJson(e)).toList();
-      });
-    }
   }
 
   Widget _noWishListData(BuildContext context) {
@@ -94,12 +80,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
           direction: DismissDirection.endToStart,
           resizeDuration: Duration(milliseconds: 400),
           onDismissed: (direction) async {
-            setState(() {
-              wishlistItems.removeAt(index); // Remove item from the list
-            });
-            var items = await CustomWidgets.getfavoriteToggle() as List<String>;
-            items.remove(products[index].name);
-            CustomWidgets.favoriteToggle(items);
+            context
+                .read<WishlistBloc>()
+                .add(RemoveFromWishlist(products[index]));
           },
           background: Container(
             color: Colors.red,

@@ -7,6 +7,15 @@ class DatabasesHelper {
   static final dbHelper = DatabasesHelper._();
   Database? db;
 
+  void deleteTableData(String tableName) async {
+    db = await openDatabase(
+      path.join(await getDatabasesPath(), 'product.db'),
+      version: 1,
+    );
+
+    db!.delete(tableName);
+  }
+
   void init() async {
     db = await openDatabase(
       path.join(await getDatabasesPath(), 'product.db'),
