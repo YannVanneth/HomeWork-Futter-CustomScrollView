@@ -86,7 +86,7 @@ class HomeView extends StatelessWidget {
                       HomePageScreen(),
                       WishlistScreen(),
                       SearchScreen(
-                        productSelector: state.products,
+                        listProducts: state.products,
                       ),
                       Settings(),
                     ],
@@ -100,6 +100,9 @@ class HomeView extends StatelessWidget {
               selectedItemColor: Colors.black,
               unselectedItemColor: Colors.grey,
               onTap: (index) {
+                if (index == 2) {
+                  context.read<MainScreenBloc>().add(SearchItemsUpdate());
+                }
                 context.read<MainScreenBloc>().add(ChangeIndexEvent(index));
                 _pageController.jumpToPage(index);
               },

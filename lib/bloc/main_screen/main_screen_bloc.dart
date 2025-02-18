@@ -19,6 +19,9 @@ class SearchItemsUpdate extends MainScreenEvent {
   // SearchItemsUpdate();
 }
 
+class OnloadedScreen extends MainScreenEvent {
+  final List<Product> product = const [];
+}
 // state
 
 class MainScreenState {
@@ -54,16 +57,33 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       },
     );
 
+    on<OnloadedScreen>(
+      (event, emit) {
+        emit(state.copyWith(
+            products: products
+                .map(
+                  (e) => Product.fromJson(e),
+                )
+                .toList()));
+      },
+    );
+
     on<SearchItemsUpdate>(
       (event, emit) {
-        var items = products
-            .where((element) => element['name']
-                .toString()
-                .startsWith(state.query.characters.first.toUpperCase()))
-            .map(
-              (e) => Product.fromJson(e),
-            )
-            .toList();
+        var items = state.query.isEmpty
+            ? products
+                .map(
+                  (e) => Product.fromJson(e),
+                )
+                .toList()
+            : products
+                .where((element) => element['name']
+                    .toString()
+                    .startsWith(state.query.characters.first.toUpperCase()))
+                .map(
+                  (e) => Product.fromJson(e),
+                )
+                .toList();
 
         emit(state.copyWith(products: items));
       },

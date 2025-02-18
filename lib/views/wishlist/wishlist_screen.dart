@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_scroll_view/bloc/wishlist_screen/wishlist_bloc.dart';
 import 'package:custom_scroll_view/bloc/wishlist_screen/wishlist_event.dart';
@@ -71,18 +73,18 @@ class WishlistScreen extends StatelessWidget {
     );
   }
 
-  Widget _wishlistItem(List<Product> products) {
+  Widget _wishlistItem(List<Product> productss) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ListView.separated(
         itemBuilder: (context, index) => Dismissible(
-          key: Key(products[index].name),
+          key: Key(productss[index].name),
           direction: DismissDirection.endToStart,
           resizeDuration: Duration(milliseconds: 400),
           onDismissed: (direction) async {
             context
                 .read<WishlistBloc>()
-                .add(RemoveFromWishlist(products[index]));
+                .add(RemoveFromWishlist(productss[index]));
           },
           background: Container(
             color: Colors.red,
@@ -90,58 +92,70 @@ class WishlistScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 30),
             child: const Icon(Icons.delete, color: Colors.white),
           ),
-          child: item(context, products[index]),
+          child: Bounceable(
+              onTap: () {
+                var productsss = products
+                    .map(
+                      (e) => Product.fromJson(e),
+                    )
+                    .toList();
+
+                var product = productsss.firstWhere(
+                  (item) =>
+                      item.featureImageUrl == productss[index].featureImageUrl,
+                );
+
+                Navigator.pushNamed(context, Routes.detailProduct,
+                    arguments: product);
+              },
+              child: item(context, productss[index])),
         ),
         separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: products.length,
+        itemCount: productss.length,
       ),
     );
   }
 }
 
 Widget item(BuildContext context, Product product) {
-  return Bounceable(
-    onTap: () =>
-        Navigator.pushNamed(context, Routes.detailProduct, arguments: product),
-    child: SizedBox(
-      height: 130,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 1,
-            child: CachedNetworkImage(imageUrl: product.featureImageUrl),
+  return SizedBox(
+    height: 130,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 1,
+          child: CachedNetworkImage(imageUrl: product.featureImageUrl),
+        ),
+        Expanded(
+          flex: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product.name,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 30),
+                child: Text(
+                  product.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.justify,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              Text(
+                '${product.currencySign} ${product.price}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 30),
-                  child: Text(
-                    product.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.justify,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-                Text(
-                  '${product.currencySign} ${product.price}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

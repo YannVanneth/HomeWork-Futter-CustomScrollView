@@ -1,4 +1,5 @@
 import 'package:custom_scroll_view/data/exports.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 
 class ViewCategoryPage extends StatefulWidget {
   const ViewCategoryPage({super.key});
@@ -41,10 +42,10 @@ class _ViewCategoryPageState extends State<ViewCategoryPage> {
                     ),
                     itemBuilder: (context, index) {
                       var product = Product.fromJson(filters[index]);
-                      return GestureDetector(
+                      return Bounceable(
                         onTap: () => Navigator.pushNamed(
                             context, Routes.detailProduct,
-                            arguments: filters[index]),
+                            arguments: Product.fromJson(filters[index])),
                         child: CustomWidgets.productCard(context,
                             cardImage: product.featureImageUrl,
                             title: product.name,

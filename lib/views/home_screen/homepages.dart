@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import '../../bloc/home_screen/home_bloc.dart';
 import '../../bloc/home_screen/home_event.dart';
 import '../../bloc/home_screen/home_state.dart';
@@ -112,18 +113,21 @@ class HomePageScreen extends StatelessWidget {
                       ),
                       itemBuilder: (context, index) {
                         var product = Product.fromJson(products[index]);
-                        return GestureDetector(
+                        return Bounceable(
                           onTap: () => Navigator.pushNamed(
                             context,
                             Routes.detailProduct,
-                            arguments: [state.filteredProducts[index]],
+                            arguments: product,
                           ),
-                          child: CustomWidgets.productCard(
-                            context,
-                            cardImage: product.featureImageUrl,
-                            title: product.name,
-                            description: product.description,
-                            price: "${product.currencySign}${product.price}",
+                          child: Hero(
+                            tag: product.featureImageUrl,
+                            child: CustomWidgets.productCard(
+                              context,
+                              cardImage: product.featureImageUrl,
+                              title: product.name,
+                              description: product.description,
+                              price: "${product.currencySign}${product.price}",
+                            ),
                           ),
                         );
                       },

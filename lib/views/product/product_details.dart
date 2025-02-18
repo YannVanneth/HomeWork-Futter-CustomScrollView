@@ -12,12 +12,7 @@ class ProductDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var itemData = ModalRoute.of(context)?.settings.arguments as List;
-
-    var item = itemData[0] as Map<String, dynamic>;
-    var product = Product.fromJson(item);
-
-    int numberOfItems = itemData.length == 2 ? itemData[1] as int : 1;
+    var product = ModalRoute.of(context)?.settings.arguments as Product;
 
     return BlocProvider(
       create: (context) => DetailScreenBloc(),
@@ -34,7 +29,7 @@ class ProductDetailsPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Expanded(child: ProductDetailContent(product, numberOfItems, item)),
+            Expanded(child: ProductDetailContent(product, 0, {})),
           ],
         ),
       ),
@@ -203,7 +198,7 @@ class ProductDetailContent extends StatelessWidget {
                             product.description,
                             style: TextStyle(fontSize: 16),
                             textAlign: TextAlign.justify,
-                            maxLines: 6,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         if (state.isExpanded)
