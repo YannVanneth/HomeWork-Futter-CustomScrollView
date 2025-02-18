@@ -53,6 +53,14 @@ class ProductDetailContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DetailScreenBloc, DetailScreenState>(
       builder: (context, state) {
+        CustomWidgets.getfavoriteToggle().then(
+          (value) {
+            if (value.contains(product.featureImageUrl)) {
+              context.read<DetailScreenBloc>().add(ToggleFavorite(true));
+            }
+          },
+        );
+
         context.read<DetailScreenBloc>().add(LoadDetailScreen(product));
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -88,31 +96,48 @@ class ProductDetailContent extends StatelessWidget {
                   ),
                   Bounceable(
                     onTap: () async {
-                      var wishlist = await readFromSharedPreferences();
-                      if (wishlist.contains(product.featureImageUrl)) {
-                        wishlist.remove(product.featureImageUrl);
-                        await DatabasesHelper.dbHelper.db!.delete('wishlists',
+                      try {
+                        var wishlist = await CustomWidgets.getfavoriteToggle()
+                            as List<String>;
+
+                        if (wishlist.contains(product.featureImageUrl)) {
+                          wishlist.remove(product.featureImageUrl);
+                          await DatabasesHelper.dbHelper.db!.delete(
+                            'wishlists',
                             where: 'api_featured_image = ?',
-                            whereArgs: [product.featureImageUrl]);
-                      } else {
-                        wishlist.add(product.featureImageUrl);
-                        await DatabasesHelper.dbHelper.db!
-                            .insert('wishlists', product.toJson());
-                      }
+                            whereArgs: [product.featureImageUrl],
+                          );
+                        } else {
+                          wishlist.add(product.featureImageUrl);
 
-                      await writeToSharedPreferences(wishlist);
+                          await DatabasesHelper.dbHelper.db!
+                              .insert('wishlists', {
+                            'product_id': product.id,
+                            'api_featured_image': product.featureImageUrl,
+                          });
+                        }
 
-                      CustomWidgets.showMessageSnakeBar(
+                        CustomWidgets.favoriteToggle(wishlist);
+
+                        CustomWidgets.showMessageSnakeBar(
                           message: state.isFavorite
                               ? "Remove Success"
                               : "Add Success",
                           backgroundColor:
                               state.isFavorite ? Colors.red : Colors.green,
-                          context: context);
+                          context: context,
+                        );
 
-                      return context
-                          .read<DetailScreenBloc>()
-                          .add(ToggleFavorite(!state.isFavorite));
+                        context
+                            .read<DetailScreenBloc>()
+                            .add(ToggleFavorite(!state.isFavorite));
+                      } catch (e) {
+                        CustomWidgets.showMessageSnakeBar(
+                          message: "An error occurred $e",
+                          backgroundColor: Colors.red,
+                          context: context,
+                        );
+                      }
                     },
                     child: Icon(
                       state.isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -211,12 +236,12 @@ class ProductDetailContent extends StatelessWidget {
   }
 }
 
-Future<void> writeToSharedPreferences(List<String> productURL) async {
-  var prefs = await SharedPreferences.getInstance();
-  prefs.setStringList("wishlist", productURL);
-}
+// Future<void> writeToSharedPreferences(List<String> productURL) async {
+//   var prefs = await SharedPreferences.getInstance();
+//   await prefs.setStringList("wishlist", productURL);
+// }
 
-Future readFromSharedPreferences() async {
-  var prefs = await SharedPreferences.getInstance();
-  return prefs.getStringList("wishlist") ?? [];
-}
+// Future<List<String>> readFromSharedPreferences() async {
+//   var prefs = await SharedPreferences.getInstance();
+//   return prefs.getStringList("wishlist") ?? [];
+// }

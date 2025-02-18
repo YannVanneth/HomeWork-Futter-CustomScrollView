@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Product {
   late int id;
   late String name;
@@ -35,17 +37,30 @@ class Product {
         .toList();
   }
 
+  Product.fromJsonDB(Map<String, dynamic> data) {
+    id = data['id'] ?? 1;
+    name = data['name'] ?? "";
+    description = data['description'] ?? "";
+    type = data['product_type'] ?? "";
+    price = data['price'] ?? "";
+    featureImageUrl = "https:${data['api_featured_image']}";
+    currencySign = data['price_sign'] ?? "";
+    // tagName = (data['tag_list'] as List).map((e) => e.toString()).toList();
+    // colors = (data['product_colors'] as List)
+    //     .map((e) => ProductColor.fromJson(e))
+    //     .toList();
+  }
+
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'name': name,
       'description': description,
       'product_type': type,
-      'price': price,
+      'price': price.toString(),
       'api_featured_image': featureImageUrl,
       'price_sign': currencySign,
-      'tag_list': tagName.map((e) => e.toString()).toList(),
-      'product_colors': colors.map((e) => e.toJson()).toList(),
+      'tag_list': jsonEncode(tagName),
+      'product_colors': jsonEncode(colors.map((e) => e.toJson()).toList()),
     };
   }
 }

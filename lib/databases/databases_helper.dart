@@ -9,23 +9,31 @@ class DatabasesHelper {
 
   void init() async {
     db = await openDatabase(
-      path.join(await getDatabasesPath(), 'YannVanneth.db'),
+      path.join(await getDatabasesPath(), 'product.db'),
       version: 1,
       onCreate: (db, version) {
         if (version == 1) {
           db.execute('''
             CREATE TABLE wishlists(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name TEXT,
-              description TEXT,
-              product_type TEXT,
-              price TEXT,
-              api_featured_image TEXT,
-              price_sign TEXT,
-              tag_list TEXT,
-              product_colors TEXT
+              product_id INTEGER,
+              api_featured_image TEXT
             )
            ''');
+
+          // db.execute('''
+          //   CREATE TABLE wishlists(
+          //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+          //     name TEXT,
+          //     description TEXT,
+          //     product_type TEXT,
+          //     price TEXT,
+          //     api_featured_image TEXT,
+          //     price_sign TEXT,
+          //     tag_list TEXT,
+          //     product_colors TEXT
+          //   )
+          //  ''');
 
           db.execute('''
             CREATE TABLE carts(

@@ -4,46 +4,6 @@ import '../../databases/databases_helper.dart';
 import './wishlist_state.dart';
 import './wishlist_event.dart';
 
-// class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
-//   WishlistBloc() : super(WishlistLoading()) {
-//     on<LoadWishlist>(_onLoadWishlist);
-//     on<RemoveFromWishlist>(_onRemoveFromWishlist);
-//   }
-
-//   Future<void> _onLoadWishlist(
-//       LoadWishlist event, Emitter<WishlistState> emit) async {
-//     final db = DatabasesHelper.dbHelper.db;
-//     final List<Map<String, dynamic>> wishlistData =
-//         await db!.query('wishlists');
-
-//     final wishlistItems =
-//         wishlistData.map((item) => Product.fromJson(item)).toList();
-
-//     for (var item in wishlistData) {
-//       var imageURL = item['ImageURL'];
-
-//       var matchingProducts = event.wishlist.where(
-//         (product) => 'https:${product.featureImageUrl}' == imageURL,
-//       );
-
-//       for (var matchingProduct in matchingProducts) {
-//         wishlistItems.add(matchingProduct);
-//       }
-//     }
-
-//     emit(WishlistLoaded(wishlistItems));
-//   }
-
-//   void _onRemoveFromWishlist(
-//       RemoveFromWishlist event, Emitter<WishlistState> emit) {
-//     if (state is WishlistLoaded) {
-//       final updatedList = List<Product>.from((state as WishlistLoaded).products)
-//         ..remove(event.product);
-//       emit(WishlistLoaded(updatedList));
-//     }
-//   }
-// }
-
 class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   WishlistBloc() : super(WishlistLoading()) {
     on<LoadWishlist>(_onLoadWishlist);
@@ -58,7 +18,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       .toList();
 
   void _onLoadWishlist(LoadWishlist event, Emitter<WishlistState> emit) {
-    emit(WishlistLoaded(_wishlistItems));
+    emit(WishlistLoaded(event.wishlist));
   }
 
   void _onAddToWishlist(AddToWishlist event, Emitter<WishlistState> emit) {

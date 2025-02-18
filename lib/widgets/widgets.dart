@@ -1,5 +1,6 @@
 import 'package:custom_scroll_view/data/exports.dart';
 import 'package:custom_scroll_view/models/detail_product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomWidgets {
   CustomWidgets._();
@@ -365,5 +366,16 @@ class CustomWidgets {
       ),
       backgroundColor: backgroundColor ?? Colors.blue,
     ));
+  }
+
+  static Future<void> favoriteToggle(List<String> isWish) async {
+    var pref = await SharedPreferences.getInstance();
+
+    pref.setStringList('isWish', isWish);
+  }
+
+  static getfavoriteToggle() async {
+    var pref = await SharedPreferences.getInstance();
+    return pref.getStringList('isWish') ?? [];
   }
 }
