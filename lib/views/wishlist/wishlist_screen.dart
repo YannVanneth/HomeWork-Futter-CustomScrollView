@@ -90,58 +90,58 @@ class WishlistScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 30),
             child: const Icon(Icons.delete, color: Colors.white),
           ),
-          child: _item(context, products[index]),
+          child: item(context, products[index]),
         ),
         separatorBuilder: (context, index) => const SizedBox(height: 10),
         itemCount: products.length,
       ),
     );
   }
+}
 
-  Widget _item(BuildContext context, Product product) {
-    return Bounceable(
-      onTap: () => Navigator.pushNamed(context, Routes.detailProduct,
-          arguments: product),
-      child: SizedBox(
-        height: 130,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 1,
-              child: CachedNetworkImage(imageUrl: product.featureImageUrl),
+Widget item(BuildContext context, Product product) {
+  return Bounceable(
+    onTap: () =>
+        Navigator.pushNamed(context, Routes.detailProduct, arguments: product),
+    child: SizedBox(
+      height: 130,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 1,
+            child: CachedNetworkImage(imageUrl: product.featureImageUrl),
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 30),
+                  child: Text(
+                    product.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.justify,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+                Text(
+                  '${product.currencySign} ${product.price}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 30),
-                    child: Text(
-                      product.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.justify,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Text(
-                    '${product.currencySign} ${product.price}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

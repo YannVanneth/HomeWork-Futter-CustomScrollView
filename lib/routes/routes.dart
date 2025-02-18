@@ -2,6 +2,7 @@ import 'package:custom_scroll_view/views/buy_now/buynow_page.dart';
 import 'package:custom_scroll_view/views/home_view.dart';
 import 'package:custom_scroll_view/views/product/product_details.dart';
 import 'package:custom_scroll_view/views/product/view_category_page.dart';
+import 'package:custom_scroll_view/views/search/search_screen.dart';
 
 import '../views/map_screen/map_screen.dart';
 import '../views/payment_method/payment_method.dart';
@@ -13,6 +14,7 @@ class Routes {
   static const String buyNowPage = '/buy_now_screen_view';
   static const String locationScreen = '/location_screen_view';
   static const String paymentMethod = '/payment_method_view';
+  static const String searchPage = '/search_page';
 }
 
 var routes = {
@@ -22,4 +24,5 @@ var routes = {
   Routes.buyNowPage: (context) => BuyNowPage(),
   Routes.locationScreen: (context) => MapScreen(),
   Routes.paymentMethod: (context) => PaymentMethod(),
+  Routes.searchPage: (context) => SearchScreen(),
 };
