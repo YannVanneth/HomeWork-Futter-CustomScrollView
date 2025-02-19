@@ -23,16 +23,17 @@ class PaymentMethod extends StatelessWidget {
                 spacing: 20,
                 leading: Image.asset("assets/icons/cash 1.png"),
                 title: Text("Cash On Delivery"),
-                description: Text("Cash On Delivery")),
+                description: Text("Cash On Delivery"),
+                noTrailing: true),
           ),
           Bounceable(
             onTap: () => Navigator.pop(context, "Credit/Debit Card"),
             child: listItems(
-              spacing: 20,
-              leading: Image.asset("assets/icons/debit/cash 1.png"),
-              title: Text("Credit/Debit Card"),
-              description: Text("VISA, Mastercard, UnionPay"),
-            ),
+                spacing: 20,
+                leading: Image.asset("assets/icons/debit/cash 1.png"),
+                title: Text("Credit/Debit Card"),
+                description: Text("VISA, Mastercard, UnionPay"),
+                noTrailing: true),
           )
         ],
       ),

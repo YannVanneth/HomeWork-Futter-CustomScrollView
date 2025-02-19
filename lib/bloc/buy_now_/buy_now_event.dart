@@ -1,11 +1,17 @@
+import 'package:custom_scroll_view/models/detail_product.dart';
+
 import '../../models/products.dart';
 
 abstract class BuyNowEvent {}
 
-class UpdatePrice extends BuyNowEvent {
-  final double price;
+class UpdatePrice extends BuyNowEvent {}
 
-  UpdatePrice(this.price);
+class UpdatePriceWithoutDiscount extends BuyNowEvent {}
+
+class UpdateDiscountRate extends BuyNowEvent {
+  final double discountRate;
+
+  UpdateDiscountRate(this.discountRate);
 }
 
 abstract class UpdateOrderInformations extends BuyNowEvent {}
@@ -17,9 +23,9 @@ class UpdateShippingAddress extends UpdateOrderInformations {
 }
 
 class UpdateBillingAddress extends UpdateOrderInformations {
-  final String address;
+  final String paymentMethod;
 
-  UpdateBillingAddress(this.address);
+  UpdateBillingAddress(this.paymentMethod);
 }
 
 class UpdatePhoneNumber extends BuyNowEvent {
@@ -33,6 +39,18 @@ class UpdateCoupons extends BuyNowEvent {
 }
 
 class LoadProducts extends BuyNowEvent {
-  final List<Product> products;
+  final List<DetailProduct> products;
   LoadProducts(this.products);
+}
+
+abstract class ProductQuantity extends BuyNowEvent {}
+
+class IncrementQuantity extends ProductQuantity {
+  final int index;
+  IncrementQuantity(this.index);
+}
+
+class DecrementQuantity extends ProductQuantity {
+  final int index;
+  DecrementQuantity(this.index);
 }

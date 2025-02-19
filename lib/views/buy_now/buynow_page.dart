@@ -4,32 +4,26 @@ import 'package:custom_scroll_view/bloc/buy_now_/buy_now_state.dart';
 import 'package:custom_scroll_view/data/exports.dart';
 import 'package:custom_scroll_view/models/detail_product.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import '../../data/coupons_code.dart';
 
 class BuyNowPage extends StatelessWidget {
   const BuyNowPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final product = ModalRoute.of(context)!.settings.arguments as DetailProduct;
+    var product =
+        ModalRoute.of(context)!.settings.arguments as List<DetailProduct>;
     return BlocProvider(
-      create: (context) => BuyNowBloc(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          leading: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Icon(Icons.arrow_back),
-          ),
-          title: Text(
-            "Orders",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: BuyNowView(),
-      ),
-    );
+        create: (context) => BuyNowBloc()
+          ..add(LoadProducts(product))
+          ..add(UpdateBillingAddress("Cash On Delivery"))
+          ..add(UpdateCoupons("Apply coupon"))
+          ..add(UpdatePhoneNumber("Enter a phone number"))
+          ..add(UpdateShippingAddress("Enter your location"))
+          ..add(UpdatePrice())
+          ..add(UpdatePriceWithoutDiscount()),
+        child: BuyNowView());
   }
 }
 
@@ -40,31 +34,97 @@ class BuyNowView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<BuyNowBloc, BuyNowState>(
       builder: (context, state) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              spacing: 20,
-              children: [
-                delivery(context, state.location),
-                contactNumber(context, state.phoneNumber),
-                paymentMethods(context, state.paymentMethod),
-                productView(context, state.products),
+        return Scaffold(
+            appBar: AppBar(
+              surfaceTintColor: Colors.white,
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              title: Text("Buy Now"),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.shopping_cart),
+                ),
               ],
             ),
-          ),
-        );
+            backgroundColor: Colors.white,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  children: [
+                    Column(
+                      spacing: 20,
+                      children: [
+                        delivery(context, state.location),
+                        contactNumber(context, state.phoneNumber),
+                        paymentMethods(context, state.paymentMethod),
+                      ],
+                    ),
+                    Expanded(child: productView(context, state.products)),
+                    Expanded(
+                      child: Column(
+                        spacing: 20,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0),
+                            child: couponsWidget(
+                                context, state.coupon, state.discountRate),
+                          ),
+                          orderSummary(
+                              context,
+                              state.price,
+                              state.discountRate,
+                              state.priceWithoutDiscount,
+                              state.products.length),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            bottomSheet: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  spacing: 90,
+                  children: [
+                    Text(
+                      "USD ${state.price}",
+                      style:
+                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    ),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(),
+                          backgroundColor: Colors.black,
+                        ),
+                        child: Text(
+                          "Buy Now",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ));
       },
     );
   }
 }
 
-Widget productView(BuildContext context, List<Product> products) {
+Widget productView(BuildContext context, List<DetailProduct> products) {
   return ListView.separated(
       itemBuilder: (context, index) {
         final product = products[index];
         return listItems(
-          title: Text(product.name,
+          noTrailing: true,
+          title: Text(product.products.name,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -72,40 +132,33 @@ Widget productView(BuildContext context, List<Product> products) {
           description: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Price : ${product.currencySign}${product.price}",
+              Text(
+                  "Price : ${product.products.currencySign}${product.products.price}",
                   style: TextStyle(fontSize: 16)),
-              // Text("Color : $selectedColor", style: TextStyle(fontSize: 16)),
+              Text("Color : ${product.colorName}",
+                  style: TextStyle(fontSize: 16)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      //   => setState(() {
-                      //   numberOfItmes++;
-                      //   updatePrice(amount: numberOfItmes);
-                      // })
-                    },
+                  Bounceable(
+                    onTap: () => context
+                        .read<BuyNowBloc>()
+                        .add(DecrementQuantity(index)),
                     child: boxButton(
                         child: Icon(
-                      Icons.add,
+                      Icons.remove,
                       size: 20,
                     )),
                   ),
                   boxButton(
-                    child: Text(""
-                        // numberOfItmes.toString(),
-                        ),
+                    child: Text(product.quantity.toString()),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      // => setState(() {
-                      // if (numberOfItmes > 1) {
-                      //   numberOfItmes--;
-                      //   updatePrice(amount: numberOfItmes);
-                      // }
-                    },
+                  Bounceable(
+                    onTap: () => context
+                        .read<BuyNowBloc>()
+                        .add(IncrementQuantity(index)),
                     child: boxButton(
-                      child: Icon(Icons.remove, size: 20),
+                      child: Icon(Icons.add, size: 20),
                     ),
                   ),
                 ],
@@ -115,7 +168,7 @@ Widget productView(BuildContext context, List<Product> products) {
           leading: SizedBox(
             height: 120,
             child: productPicture(
-              image: NetworkImage(product.featureImageUrl),
+              image: NetworkImage(product.products.featureImageUrl),
             ),
           ),
         );
@@ -126,7 +179,8 @@ Widget productView(BuildContext context, List<Product> products) {
       itemCount: products.length);
 }
 
-Widget couponsWidget(BuildContext context, String? coupons) {
+Widget couponsWidget(
+    BuildContext context, String? couponss, double? discountRate) {
   return GestureDetector(
     onTap: () async {
       var couponCode = await CustomWidgets.inputField(context,
@@ -136,13 +190,79 @@ Widget couponsWidget(BuildContext context, String? coupons) {
 
       if (couponCode is String) {
         context.read<BuyNowBloc>().add(UpdateCoupons(couponCode));
+
+        for (var code in coupons) {
+          if (code['code'] == couponCode) {
+            context.read<BuyNowBloc>().add(
+                UpdateDiscountRate(double.parse(code['value'].toString())));
+
+            context.read<BuyNowBloc>().add(UpdatePrice());
+            break;
+          }
+        }
       }
     },
     child: listItems(
       leading: Image.asset("assets/icons/Voucher.png"),
       title: Text("Coupons", style: TextStyle(fontSize: 18)),
-      description: Text(coupons ?? "Enter code to get discount"),
+      description: Row(
+        spacing: 5,
+        children: [
+          Text(couponss ?? "Enter code to get discount"),
+          discountRate != 0
+              ? Text(
+                  "$discountRate%",
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                )
+              : Text("")
+        ],
+      ),
+      noTrailing: true,
     ),
+  );
+}
+
+Widget orderSummary(BuildContext context, double price, double discount,
+    double priceWithoutDiscount, int numberOfProducts) {
+  return Column(
+    spacing: 10,
+    children: [
+      listItems(
+        leading: Icon(
+          Icons.receipt,
+        ),
+        title: Text(
+            "Order Summary (${numberOfProducts > 1 ? "$numberOfProducts items" : "$numberOfProducts item"})",
+            style: TextStyle(fontSize: 18)),
+        noDescription: true,
+        noTrailing: true,
+      ),
+      Column(
+        children: [
+          listItems(
+            leading: Text("Sub Total", style: TextStyle(fontSize: 17.5)),
+            trailing: Text("USD $priceWithoutDiscount",
+                style: TextStyle(fontSize: 17.5)),
+            noDescription: true,
+            noTitle: true,
+          ),
+          listItems(
+            leading: Text("Discount", style: TextStyle(fontSize: 17.5)),
+            trailing: Text(discount == 0 ? "------" : "$discount%",
+                style: TextStyle(fontSize: 17.5)),
+            noDescription: true,
+            noTitle: true,
+          ),
+          listItems(
+            leading: Text("Total", style: TextStyle(fontSize: 18)),
+            trailing: Text("USD $price", style: TextStyle(fontSize: 18)),
+            noDescription: true,
+            noTitle: true,
+          ),
+        ],
+      )
+    ],
   );
 }
 
@@ -160,15 +280,17 @@ Widget paymentMethods(BuildContext context, String? paymentMethod) {
       }
     },
     child: listItems(
-        leading: Image.asset(
-          "assets/icons/Cash in Hand.png",
-        ),
-        title: Text(paymentMethod ?? "Payment", style: TextStyle(fontSize: 18)),
-        description: Text(paymentMethod ?? "Cash on delivery")),
+      leading: Image.asset(
+        "assets/icons/Cash in Hand.png",
+      ),
+      title: Text("Payment", style: TextStyle(fontSize: 18)),
+      description: Text(paymentMethod ?? "Cash on delivery"),
+      noTrailing: true,
+    ),
   );
 }
 
-Widget contactNumber(BuildContext context, String phoneNumber) {
+Widget contactNumber(BuildContext context, String? phoneNumber) {
   return GestureDetector(
     onTap: () async {
       var contactNumber = await CustomWidgets.inputField(context,
@@ -179,9 +301,11 @@ Widget contactNumber(BuildContext context, String phoneNumber) {
       }
     },
     child: listItems(
-        leading: Icon(Icons.phone),
-        title: Text("Contact Number", style: TextStyle(fontSize: 18)),
-        description: Text(phoneNumber ?? "Enter your contact number")),
+      leading: Icon(Icons.phone),
+      title: Text("Contact Number", style: TextStyle(fontSize: 18)),
+      description: Text(phoneNumber ?? "Enter your contact number"),
+      noTrailing: true,
+    ),
   );
 }
 
@@ -195,11 +319,13 @@ Widget delivery(BuildContext context, String? location) {
       }
     },
     child: listItems(
-        title: Text(
-          location ?? "Delivery Location",
-          style: TextStyle(fontSize: 18),
-        ),
-        description: Text("42 St 606, Phnom Penh")),
+      title: Text(
+        "Delivery Location",
+        style: TextStyle(fontSize: 18),
+      ),
+      description: Text(location ?? "42 St 606, Phnom Penh"),
+      noTrailing: true,
+    ),
   );
 }
 
@@ -228,12 +354,16 @@ Widget listItems({
   bool noDescription = false,
   bool noLeading = false,
   bool noTitle = false,
+  bool noTrailing = false,
   double spacing = 10,
+  Widget? trailing,
 }) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     child: Row(
-      spacing: spacing,
+      spacing: noTitle ? 0 : spacing,
+      mainAxisAlignment:
+          noTitle ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (noLeading == false)
@@ -255,7 +385,8 @@ Widget listItems({
                       ),
               ],
             ),
-          )
+          ),
+        if (noTrailing == false) trailing ?? Icon(Icons.arrow_forward_ios),
       ],
     ),
   );

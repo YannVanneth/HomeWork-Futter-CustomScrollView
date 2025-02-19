@@ -120,7 +120,9 @@ class _MapScreenState extends State<MapScreen> {
                   SizedBox(
                     width: MediaQuery.sizeOf(context).width,
                     child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context, address);
+                        },
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(2)),

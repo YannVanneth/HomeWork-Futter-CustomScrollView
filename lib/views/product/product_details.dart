@@ -13,9 +13,20 @@ class ProductDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var product = ModalRoute.of(context)?.settings.arguments as Product;
+    // var isWishlist = false;
+
+    // CustomWidgets.getfavoriteToggle().then(
+    //   (value) {
+    //     if (value.contains(product.featureImageUrl)) {
+    //       isWishlist = true;
+    //     }
+    //   },
+    // );
 
     return BlocProvider(
       create: (context) => DetailScreenBloc(),
+      // ..add(LoadDetailScreen(product))
+      // ..add(ToggleFavorite(isWishlist)),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -229,13 +240,3 @@ class ProductDetailContent extends StatelessWidget {
     );
   }
 }
-
-// Future<void> writeToSharedPreferences(List<String> productURL) async {
-//   var prefs = await SharedPreferences.getInstance();
-//   await prefs.setStringList("wishlist", productURL);
-// }
-
-// Future<List<String>> readFromSharedPreferences() async {
-//   var prefs = await SharedPreferences.getInstance();
-//   return prefs.getStringList("wishlist") ?? [];
-// }

@@ -211,14 +211,15 @@ class CustomWidgets {
           width: MediaQuery.sizeOf(context).width * 0.30,
           child: OutlinedButton(
             onPressed: () {
-              if (isSelectedColor.isNotEmpty || item.colors.isEmpty) {
-                Navigator.pushNamed(context, Routes.buyNowPage,
-                    arguments: DetailProduct(
-                        name: item.name,
-                        image: item.featureImageUrl,
-                        price: double.parse(item.price),
-                        currency: item.currencySign,
-                        quantity: 0));
+              if ((isSelectedColor.isNotEmpty &&
+                      isSelectedColor != "unknown") ||
+                  item.colors.isEmpty) {
+                Navigator.pushNamed(context, Routes.buyNowPage, arguments: [
+                  DetailProduct(colorName: isSelectedColor, products: item),
+                  DetailProduct(colorName: isSelectedColor, products: item),
+                  DetailProduct(colorName: isSelectedColor, products: item),
+                  DetailProduct(colorName: isSelectedColor, products: item),
+                ]);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   backgroundColor: Colors.red,

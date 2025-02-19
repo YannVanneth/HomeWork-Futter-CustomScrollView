@@ -1,4 +1,5 @@
 import 'package:custom_scroll_view/data/exports.dart';
+import 'package:custom_scroll_view/models/detail_product.dart';
 
 class BuyNowState {
   final String location;
@@ -6,9 +7,13 @@ class BuyNowState {
   final String phoneNumber;
   final double price;
   final String coupon;
-  final List<Product> products;
+  final List<DetailProduct> products;
+  final double discountRate;
+  final double priceWithoutDiscount;
 
   BuyNowState({
+    this.priceWithoutDiscount = 0.0,
+    this.discountRate = 0.0,
     this.products = const [],
     this.location = 'unknown',
     this.paymentMethod = 'unknown',
@@ -18,7 +23,10 @@ class BuyNowState {
   });
 
   BuyNowState copyWith({
-    List<Product>? products,
+    double? priceWithoutDiscount,
+    double? discountRate,
+    int? quantity,
+    List<DetailProduct>? products,
     String? location,
     String? paymentMethod,
     String? phoneNumber,
@@ -26,6 +34,8 @@ class BuyNowState {
     String? coupon,
   }) {
     return BuyNowState(
+      priceWithoutDiscount: priceWithoutDiscount ?? this.priceWithoutDiscount,
+      discountRate: discountRate ?? this.discountRate,
       products: products ?? this.products,
       location: location ?? this.location,
       paymentMethod: paymentMethod ?? this.paymentMethod,
