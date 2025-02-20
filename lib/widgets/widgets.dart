@@ -1,5 +1,12 @@
+import 'package:custom_scroll_view/bloc/addToCarts/add_bloc.dart';
+import 'package:custom_scroll_view/bloc/addToCarts/add_event.dart';
 import 'package:custom_scroll_view/data/exports.dart';
+import 'package:custom_scroll_view/databases/add_2_cart_helper.dart';
+import 'package:custom_scroll_view/databases/databases_helper.dart';
 import 'package:custom_scroll_view/models/detail_product.dart';
+import 'package:custom_scroll_view/models/product_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomWidgets {
@@ -189,14 +196,44 @@ class CustomWidgets {
   }
 
   static Widget bottomArea(
-      BuildContext context, Product item, String isSelectedColor) {
+      BuildContext context, Product item, String isSelectedColor,
+      {int quantity = 1}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
           width: MediaQuery.sizeOf(context).width * 0.60,
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () async {
+              try {
+                if ((isSelectedColor == "unknown" && item.colors.isNotEmpty)) {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.warning,
+                    text: "Please Select The Color First!",
+                    confirmBtnText: "Okay",
+                    confirmBtnColor: Colors.red,
+                    customAsset:
+                        "assets/gif/Warning Anthony Anderson GIF by HULU.gif",
+                    title: "Warning",
+                  );
+                } else {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.success,
+                    text: "The item has been added to the cart",
+                    confirmBtnText: "Okay",
+                    confirmBtnColor: Colors.green,
+                    customAsset:
+                        "assets/gif/Turn Up Dancing GIF by Rosanna Pansino.gif",
+                    title: "Congratulations",
+                  );
+                  await Add2Cart.addToCart(item, isSelectedColor, quantity);
+                }
+              } catch (e) {
+                print(e);
+              }
+            },
             style: OutlinedButton.styleFrom(
               shape: RoundedRectangleBorder(),
               backgroundColor: Colors.white,
@@ -210,35 +247,56 @@ class CustomWidgets {
         SizedBox(
           width: MediaQuery.sizeOf(context).width * 0.30,
           child: OutlinedButton(
-            onPressed: () {
+            onPressed: () async {
               if ((isSelectedColor.isNotEmpty &&
                       isSelectedColor != "unknown") ||
                   item.colors.isEmpty) {
-                Navigator.pushNamed(context, Routes.buyNowPage, arguments: [
-                  DetailProduct(colorName: isSelectedColor, products: item),
-                  DetailProduct(colorName: isSelectedColor, products: item),
-                  DetailProduct(colorName: isSelectedColor, products: item),
-                  DetailProduct(colorName: isSelectedColor, products: item),
-                ]);
+                var data = await Add2Cart.readModelsFromFile();
+
+                if (data.isNotEmpty) {
+                  for (var items in data) {
+                    if (items.selectedColor != isSelectedColor &&
+                        items.image != item.featureImageUrl) {
+                      data.add(ProductModel(
+                          title: item.name,
+                          description: item.description,
+                          price: item.price,
+                          image: item.featureImageUrl,
+                          priceSign: item.currencySign,
+                          tagList: item.tagName,
+                          productType: item.type,
+                          productColors: item.colors,
+                          selectedColor: isSelectedColor,
+                          qty: quantity));
+                    }
+                  }
+                } else {
+                  data.add(ProductModel(
+                      title: item.name,
+                      description: item.description,
+                      price: item.price,
+                      image: item.featureImageUrl,
+                      priceSign: item.currencySign,
+                      tagList: item.tagName,
+                      productType: item.type,
+                      productColors: item.colors,
+                      selectedColor: isSelectedColor,
+                      qty: quantity));
+                }
+
+                Navigator.pushNamed(context, Routes.buyNowPage,
+                    arguments: data);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.red,
-                  content: Row(
-                    spacing: 10,
-                    children: [
-                      Icon(
-                        Icons.error,
-                        color: Colors.white,
-                      ),
-                      Text("Please select color",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18)),
-                    ],
-                  ),
-                  shape: RoundedRectangleBorder(),
-                ));
+                QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.warning,
+                  text: "Please Select The Color First!",
+                  confirmBtnText: "Okay",
+                  confirmBtnColor: Colors.red,
+                  customAsset:
+                      "assets/gif/Warning Anthony Anderson GIF by HULU.gif",
+                  title: "Warning",
+                );
               }
             },
             style: OutlinedButton.styleFrom(
@@ -378,5 +436,45 @@ class CustomWidgets {
   static Future<List<String>> getfavoriteToggle() async {
     var pref = await SharedPreferences.getInstance();
     return pref.getStringList('isWish') ?? [];
+  }
+
+  static Widget noWishListData(BuildContext context, {bool hasButton = true}) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.file_present_sharp, size: 38),
+              const SizedBox(width: 5), // Fixed spacing
+              const Text(
+                "NO DATA",
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          if (hasButton) const SizedBox(height: 10), // Fixed spacing
+          if (hasButton)
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                backgroundColor: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, Routes.home);
+              },
+              child: const Text(
+                "Back to homepage",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

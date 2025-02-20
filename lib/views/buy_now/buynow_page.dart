@@ -3,6 +3,7 @@ import 'package:custom_scroll_view/bloc/buy_now_/buy_now_event.dart';
 import 'package:custom_scroll_view/bloc/buy_now_/buy_now_state.dart';
 import 'package:custom_scroll_view/data/exports.dart';
 import 'package:custom_scroll_view/models/detail_product.dart';
+import 'package:custom_scroll_view/models/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import '../../data/coupons_code.dart';
@@ -13,7 +14,7 @@ class BuyNowPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var product =
-        ModalRoute.of(context)!.settings.arguments as List<DetailProduct>;
+        ModalRoute.of(context)!.settings.arguments as List<ProductModel>;
     return BlocProvider(
         create: (context) => BuyNowBloc()
           ..add(LoadProducts(product))
@@ -53,16 +54,19 @@ class BuyNowView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
                   children: [
-                    Column(
-                      spacing: 20,
-                      children: [
-                        delivery(context, state.location),
-                        contactNumber(context, state.phoneNumber),
-                        paymentMethods(context, state.paymentMethod),
-                      ],
+                    Expanded(
+                      child: Column(
+                        spacing: 20,
+                        children: [
+                          delivery(context, state.location),
+                          contactNumber(context, state.phoneNumber),
+                          paymentMethods(context, state.paymentMethod),
+                        ],
+                      ),
                     ),
                     Expanded(child: productView(context, state.products)),
                     Expanded(
+                      flex: 2,
                       child: Column(
                         spacing: 20,
                         children: [
@@ -104,7 +108,7 @@ class BuyNowView extends StatelessWidget {
                           backgroundColor: Colors.black,
                         ),
                         child: Text(
-                          "Buy Now",
+                          "Place Order",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -118,60 +122,80 @@ class BuyNowView extends StatelessWidget {
   }
 }
 
-Widget productView(BuildContext context, List<DetailProduct> products) {
-  return ListView.separated(
-      itemBuilder: (context, index) {
-        final product = products[index];
-        return listItems(
-          noTrailing: true,
-          title: Text(product.products.name,
+Widget listProductView(
+    BuildContext context, ProductModel product, bool? isSelected,
+    {bool hasSelected = false, int index = 0}) {
+  return listItems(
+    noTrailing: true,
+    title: Row(
+      spacing: hasSelected ? 20 : 0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(product.title,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               )),
-          description: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                  "Price : ${product.products.currencySign}${product.products.price}",
-                  style: TextStyle(fontSize: 16)),
-              Text("Color : ${product.colorName}",
-                  style: TextStyle(fontSize: 16)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Bounceable(
-                    onTap: () => context
-                        .read<BuyNowBloc>()
-                        .add(DecrementQuantity(index)),
-                    child: boxButton(
-                        child: Icon(
-                      Icons.remove,
-                      size: 20,
-                    )),
-                  ),
-                  boxButton(
-                    child: Text(product.quantity.toString()),
-                  ),
-                  Bounceable(
-                    onTap: () => context
-                        .read<BuyNowBloc>()
-                        .add(IncrementQuantity(index)),
-                    child: boxButton(
-                      child: Icon(Icons.add, size: 20),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-          leading: SizedBox(
-            height: 120,
-            child: productPicture(
-              image: NetworkImage(product.products.featureImageUrl),
+        ),
+        if (hasSelected)
+          Bounceable(
+              onTap: () {},
+              child: isSelected == null || isSelected == false
+                  ? Icon(Icons.circle)
+                  : Icon(Icons.check_circle))
+      ],
+    ),
+    description: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Price : ${product.priceSign}${product.price}",
+            style: TextStyle(fontSize: 16)),
+        Text("Color : ${product.selectedColor}",
+            style: TextStyle(fontSize: 16)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Bounceable(
+              onTap: () =>
+                  context.read<BuyNowBloc>().add(DecrementQuantity(index)),
+              child: boxButton(
+                  child: Icon(
+                Icons.remove,
+                size: 20,
+              )),
             ),
-          ),
-        );
+            boxButton(
+              child: Text(product.qty.toString()),
+            ),
+            Bounceable(
+              onTap: () =>
+                  context.read<BuyNowBloc>().add(IncrementQuantity(index)),
+              child: boxButton(
+                child: Icon(Icons.add, size: 20),
+              ),
+            ),
+          ],
+        )
+      ],
+    ),
+    leading: SizedBox(
+      height: 120,
+      child: productPicture(
+        image: NetworkImage(product.image),
+      ),
+    ),
+  );
+}
+
+Widget productView(BuildContext context, List<ProductModel> products,
+    {bool? isSelected, bool hasSelected = false}) {
+  return ListView.separated(
+      itemBuilder: (context, index) {
+        final product = products[index];
+        return listProductView(context, product, isSelected,
+            hasSelected: hasSelected, index: index);
       },
       separatorBuilder: (context, index) => SizedBox(
             height: 10,

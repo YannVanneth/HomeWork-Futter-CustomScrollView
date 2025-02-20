@@ -13,7 +13,8 @@ class DatabasesHelper {
       version: 1,
     );
 
-    db!.delete(tableName);
+    // db!.delete(tableName);
+    db!.delete('$tableName');
   }
 
   void init() async {
@@ -35,7 +36,8 @@ class DatabasesHelper {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               product_id INTEGER,
               colour TEXT,
-              quantity INTEGER
+              quantity INTEGER,
+              api_featured_image TEXT
             )
            ''');
 

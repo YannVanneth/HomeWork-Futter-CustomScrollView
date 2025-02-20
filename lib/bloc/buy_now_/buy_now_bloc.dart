@@ -1,6 +1,7 @@
 import 'package:custom_scroll_view/bloc/buy_now_/buy_now_event.dart';
 import 'package:custom_scroll_view/bloc/buy_now_/buy_now_state.dart';
 import 'package:custom_scroll_view/models/detail_product.dart';
+import 'package:custom_scroll_view/models/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BuyNowBloc extends Bloc<BuyNowEvent, BuyNowState> {
@@ -21,7 +22,7 @@ class BuyNowBloc extends Bloc<BuyNowEvent, BuyNowState> {
       double totalPrice = 0.0;
 
       for (var item in state.products) {
-        totalPrice += (item.quantity * double.parse(item.products.price));
+        totalPrice += (item.qty * double.parse(item.price));
       }
 
       return emit(state.copyWith(priceWithoutDiscount: totalPrice));
@@ -31,7 +32,7 @@ class BuyNowBloc extends Bloc<BuyNowEvent, BuyNowState> {
       double totalPrice = 0.0;
 
       for (var item in state.products) {
-        totalPrice += (item.quantity * double.parse(item.products.price));
+        totalPrice += (item.qty * double.parse(item.price));
       }
 
       // find discount
@@ -58,10 +59,10 @@ class BuyNowBloc extends Bloc<BuyNowEvent, BuyNowState> {
         (event, emit) => emit(state.copyWith(products: event.products)));
 
     on<IncrementQuantity>((event, emit) {
-      final List<DetailProduct> updatedProducts = List.from(state.products);
+      final List<ProductModel> updatedProducts = List.from(state.products);
 
-      updatedProducts[event.index] = updatedProducts[event.index].copyWith(
-        quantity: updatedProducts[event.index].quantity + 1,
+      updatedProducts[event.index] = updatedProducts[event.index].copywith(
+        qty: updatedProducts[event.index].qty + 1,
       );
 
       emit(state.copyWith(products: updatedProducts));
@@ -70,11 +71,11 @@ class BuyNowBloc extends Bloc<BuyNowEvent, BuyNowState> {
     });
 
     on<DecrementQuantity>((event, emit) {
-      final List<DetailProduct> updatedProducts = List.from(state.products);
+      final List<ProductModel> updatedProducts = List.from(state.products);
 
-      if (updatedProducts[event.index].quantity > 1) {
-        updatedProducts[event.index] = updatedProducts[event.index].copyWith(
-          quantity: updatedProducts[event.index].quantity - 1,
+      if (updatedProducts[event.index].qty > 1) {
+        updatedProducts[event.index] = updatedProducts[event.index].copywith(
+          qty: updatedProducts[event.index].qty - 1,
         );
 
         emit(state.copyWith(products: updatedProducts));

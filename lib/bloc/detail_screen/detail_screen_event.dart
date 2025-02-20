@@ -24,3 +24,13 @@ class ShowDetailScreen extends DetailScreenEvent {
   final bool isExpanded;
   ShowDetailScreen(this.isExpanded);
 }
+
+class AddToCart extends DetailScreenEvent {
+  final Product product;
+
+  AddToCart(this.product);
+}
+
+class UpdateTotalQty extends DetailScreenEvent {}
+
+class LoadIsWishListItem extends DetailScreenEvent {}

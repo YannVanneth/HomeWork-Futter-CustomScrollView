@@ -6,6 +6,7 @@ class DetailScreenState {
   final bool isFavorite;
   final String selectedColor;
   final Product product;
+  final int qty;
 
   DetailScreenState({
     Product? product,
@@ -13,9 +14,11 @@ class DetailScreenState {
     this.isExpanded = false,
     this.isLoading = false,
     this.isFavorite = false,
+    this.qty = 1,
   }) : product = product ?? Product();
 
   DetailScreenState copyWith({
+    int? qty,
     Product? product,
     bool? isLoading,
     bool? isFavorite,
@@ -23,6 +26,7 @@ class DetailScreenState {
     String? selectedColor,
   }) {
     return DetailScreenState(
+      qty: qty ?? this.qty,
       product: product ?? this.product,
       selectedColor: selectedColor ?? this.selectedColor,
       isExpanded: isExpanded ?? this.isExpanded,

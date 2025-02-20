@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:custom_scroll_view/models/product_model.dart';
+
 class Product {
   late int id;
   late String name;
@@ -33,7 +35,7 @@ class Product {
     currencySign = data['price_sign'] ?? "";
     tagName = (data['tag_list'] as List).map((e) => e.toString()).toList();
     colors = (data['product_colors'] as List)
-        .map((e) => ProductColor.fromJson(e))
+        .map((e) => ProductColor.fromJSON(e))
         .toList();
   }
 
@@ -65,19 +67,13 @@ class Product {
   }
 }
 
-class ProductColor {
-  late String colorCode;
-  late String colorName;
+// class ProductColor {
+//   late String colorCode;
+//   late String colorName;
 
-  ProductColor.fromJson(Map<String, dynamic> data) {
-    colorCode = data['hex_value'] ?? "";
-    colorName = data['colour_name'] ?? "";
-  }
+//   ProductColor.fromJson(Map<String, dynamic> data) {
+//     colorCode = data['hex_value'] ?? "";
+//     colorName = data['colour_name'] ?? "";
+//   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'hex_value': colorCode,
-      'colour_name': colorName,
-    };
-  }
-}
+// }

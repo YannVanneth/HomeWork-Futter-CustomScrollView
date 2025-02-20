@@ -1,4 +1,5 @@
 import 'package:custom_scroll_view/models/detail_product.dart';
+import 'package:custom_scroll_view/models/product_model.dart';
 
 import '../../models/products.dart';
 
@@ -39,7 +40,7 @@ class UpdateCoupons extends BuyNowEvent {
 }
 
 class LoadProducts extends BuyNowEvent {
-  final List<DetailProduct> products;
+  final List<ProductModel> products;
   LoadProducts(this.products);
 }
 

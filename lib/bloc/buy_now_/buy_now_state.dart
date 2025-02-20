@@ -1,5 +1,6 @@
 import 'package:custom_scroll_view/data/exports.dart';
 import 'package:custom_scroll_view/models/detail_product.dart';
+import 'package:custom_scroll_view/models/product_model.dart';
 
 class BuyNowState {
   final String location;
@@ -7,7 +8,7 @@ class BuyNowState {
   final String phoneNumber;
   final double price;
   final String coupon;
-  final List<DetailProduct> products;
+  final List<ProductModel> products;
   final double discountRate;
   final double priceWithoutDiscount;
 
@@ -26,7 +27,7 @@ class BuyNowState {
     double? priceWithoutDiscount,
     double? discountRate,
     int? quantity,
-    List<DetailProduct>? products,
+    List<ProductModel>? products,
     String? location,
     String? paymentMethod,
     String? phoneNumber,

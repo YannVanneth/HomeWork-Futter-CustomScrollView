@@ -1,3 +1,4 @@
+import 'package:custom_scroll_view/views/add_carts_/add_to_carts_screen.dart';
 import 'package:custom_scroll_view/views/buy_now/buynow_page.dart';
 import 'package:custom_scroll_view/views/home_view.dart';
 import 'package:custom_scroll_view/views/product/product_details.dart';
@@ -15,6 +16,7 @@ class Routes {
   static const String locationScreen = '/location_screen_view';
   static const String paymentMethod = '/payment_method_view';
   static const String searchPage = '/search_page';
+  static const String cartView = '/cart_view';
 }
 
 var routes = {
@@ -25,4 +27,5 @@ var routes = {
   Routes.locationScreen: (context) => MapScreen(),
   Routes.paymentMethod: (context) => PaymentMethod(),
   Routes.searchPage: (context) => SearchScreen(),
+  Routes.cartView: (context) => AddToCartsScreen(),
 };

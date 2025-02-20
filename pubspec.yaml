@@ -28,6 +28,7 @@ dependencies:
   animation_search_bar: ^0.0.10
 
   cupertino_icons: ^1.0.8
+  quickalert: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +41,5 @@ flutter:
   assets:
     - assets/icons/
     - assets/icons/debit/
+    - assets/gif/ConfusedTheOffice.gif
+    - assets/gif/

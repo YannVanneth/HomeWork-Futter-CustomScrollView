@@ -6,6 +6,7 @@ import 'package:custom_scroll_view/views/home_screen/homepages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import '../bloc/main_screen/main_screen_bloc.dart';
+import '../databases/databases_helper.dart';
 import 'settings/settings.dart';
 import 'wishlist/wishlist_screen.dart';
 
@@ -21,7 +22,7 @@ class HomeView extends StatelessWidget {
     //   (value) => value.clear(),
     // );
 
-    // DatabasesHelper.dbHelper.deleteTableData("wishlists");
+    // DatabasesHelper.dbHelper.deleteTableData("carts");
 
     var txtController = TextEditingController();
 

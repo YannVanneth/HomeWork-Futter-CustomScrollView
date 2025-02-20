@@ -37,42 +37,6 @@ class WishlistScreen extends StatelessWidget {
     );
   }
 
-  Widget _noWishListData(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.file_present_sharp, size: 38),
-            const SizedBox(width: 5), // Fixed spacing
-            const Text(
-              "NO DATA",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10), // Fixed spacing
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-            backgroundColor: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pushNamed(context, Routes.home);
-          },
-          child: const Text(
-            "Back to homepage",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _wishlistItem(List<Product> productss) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -115,6 +79,42 @@ class WishlistScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _noWishListData(BuildContext context) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.file_present_sharp, size: 38),
+          const SizedBox(width: 5), // Fixed spacing
+          const Text(
+            "NO DATA",
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      const SizedBox(height: 10), // Fixed spacing
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+          backgroundColor: Colors.black,
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(context, Routes.home);
+        },
+        child: const Text(
+          "Back to homepage",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    ],
+  );
 }
 
 Widget item(BuildContext context, Product product) {
