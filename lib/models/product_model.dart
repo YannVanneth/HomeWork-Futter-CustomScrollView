@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ProductModel {
+  late int id;
   late String title;
   late String description;
   late String image;
@@ -11,6 +12,7 @@ class ProductModel {
   late int qty;
   late String selectedColor;
   ProductModel({
+    required this.id,
     required this.title,
     required this.description,
     required this.image,
@@ -24,7 +26,7 @@ class ProductModel {
   });
   ProductModel.fromJSON(Map<String, dynamic> item) {
     //how to hav from JSON
-
+    id = item['id'] ?? 1;
     title = item['name'] ?? "";
     description = item['description'] ?? "No description";
     image = item['api_featured_image'] != null
@@ -44,7 +46,28 @@ class ProductModel {
     qty = item['quantity'] ?? 0;
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': title,
+      'description': description,
+      'api_featured_image': image,
+      'price_sign': priceSign,
+      'price': price,
+      'tag_list': tagList,
+      'product_type': productType,
+      'product_colors': productColors
+          .map(
+            (e) => e.toJson(),
+          )
+          .toList(),
+      'selected_color': selectedColor,
+      'quantity': qty
+    };
+  }
+
   ProductModel copywith({
+    int? id,
     String? title,
     String? description,
     String? image,
@@ -57,6 +80,7 @@ class ProductModel {
     String? selectedColor,
   }) {
     return ProductModel(
+      id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       image: image ?? this.image,

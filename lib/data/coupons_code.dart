@@ -6,5 +6,9 @@ final List<Map<String, dynamic>> coupons = [
   {
     "code": "HAPPY NEW YEAR",
     "value": 10, //Discount 10%
+  },
+  {
+    "code": "VANNETH",
+    "value": 100, //Discount 10%
   }
 ];

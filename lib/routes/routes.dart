@@ -1,11 +1,13 @@
-import 'package:custom_scroll_view/views/add_carts_/add_to_carts_screen.dart';
-import 'package:custom_scroll_view/views/buy_now/buynow_page.dart';
-import 'package:custom_scroll_view/views/home_view.dart';
-import 'package:custom_scroll_view/views/product/product_details.dart';
-import 'package:custom_scroll_view/views/product/view_category_page.dart';
-import 'package:custom_scroll_view/views/search/search_screen.dart';
+import 'package:flutter_level_01/views/add_carts_/add_to_carts_screen.dart';
+import 'package:flutter_level_01/views/buy_now/buynow_page.dart';
+import 'package:flutter_level_01/views/home_view.dart';
+import 'package:flutter_level_01/views/my_order_details.dart';
+import 'package:flutter_level_01/views/product/product_details.dart';
+import 'package:flutter_level_01/views/product/view_category_page.dart';
+import 'package:flutter_level_01/views/search/search_screen.dart';
 
 import '../views/map_screen/map_screen.dart';
+import '../views/my_orders_screen.dart';
 import '../views/payment_method/payment_method.dart';
 
 class Routes {
@@ -17,6 +19,8 @@ class Routes {
   static const String paymentMethod = '/payment_method_view';
   static const String searchPage = '/search_page';
   static const String cartView = '/cart_view';
+  static const String myOrders = '/my_orders';
+  static const String myOrdersDetails = '/my_orders/details';
 }
 
 var routes = {
@@ -28,4 +32,6 @@ var routes = {
   Routes.paymentMethod: (context) => PaymentMethod(),
   Routes.searchPage: (context) => SearchScreen(),
   Routes.cartView: (context) => AddToCartsScreen(),
+  Routes.myOrders: (context) => MyOrdersScreen(),
+  Routes.myOrdersDetails: (context) => MyOrderDetails(),
 };

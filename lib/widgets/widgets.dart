@@ -1,12 +1,5 @@
-import 'package:custom_scroll_view/bloc/addToCarts/add_bloc.dart';
-import 'package:custom_scroll_view/bloc/addToCarts/add_event.dart';
-import 'package:custom_scroll_view/data/exports.dart';
-import 'package:custom_scroll_view/databases/add_2_cart_helper.dart';
-import 'package:custom_scroll_view/databases/databases_helper.dart';
-import 'package:custom_scroll_view/models/detail_product.dart';
-import 'package:custom_scroll_view/models/product_model.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quickalert/quickalert.dart';
+import 'package:flutter_level_01/data/exports.dart';
+import 'package:flutter_level_01/models/product_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomWidgets {
@@ -105,7 +98,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget productTags(Product product) {
+  static Widget productTags(ProductModel product) {
     return Column(
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +109,7 @@ class CustomWidgets {
           child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                var tag = product.tagName;
+                var tag = product.tagList;
 
                 return tag.isNotEmpty
                     ? itemTags(tagName: tag[index], backgroundColor: Colors.red)
@@ -126,7 +119,7 @@ class CustomWidgets {
                     width: 8,
                   ),
               itemCount:
-                  product.tagName.isNotEmpty ? product.tagName.length : 1),
+                  product.tagList.isNotEmpty ? product.tagList.length : 1),
         )
       ],
     );
@@ -175,13 +168,13 @@ class CustomWidgets {
     );
   }
 
-  static Widget productImage(BuildContext context, Product product) {
+  static Widget productImage(BuildContext context, ProductModel product) {
     return Container(
       color: Colors.white,
       height: MediaQuery.sizeOf(context).height * 0.30,
       width: double.infinity,
       child: Image.network(
-        product.featureImageUrl,
+        product.image,
         errorBuilder: (context, error, stackTrace) => error404(),
       ),
     );
@@ -195,123 +188,126 @@ class CustomWidgets {
     );
   }
 
-  static Widget bottomArea(
-      BuildContext context, Product item, String isSelectedColor,
-      {int quantity = 1}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.60,
-          child: OutlinedButton(
-            onPressed: () async {
-              try {
-                if ((isSelectedColor == "unknown" && item.colors.isNotEmpty)) {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.warning,
-                    text: "Please Select The Color First!",
-                    confirmBtnText: "Okay",
-                    confirmBtnColor: Colors.red,
-                    customAsset:
-                        "assets/gif/Warning Anthony Anderson GIF by HULU.gif",
-                    title: "Warning",
-                  );
-                } else {
-                  QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.success,
-                    text: "The item has been added to the cart",
-                    confirmBtnText: "Okay",
-                    confirmBtnColor: Colors.green,
-                    customAsset:
-                        "assets/gif/Turn Up Dancing GIF by Rosanna Pansino.gif",
-                    title: "Congratulations",
-                  );
-                  await Add2Cart.addToCart(item, isSelectedColor, quantity);
-                }
-              } catch (e) {
-                print(e);
-              }
-            },
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(),
-              backgroundColor: Colors.white,
-            ),
-            child: Text(
-              "Add to cart",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.30,
-          child: OutlinedButton(
-            onPressed: () async {
-              if ((isSelectedColor.isNotEmpty &&
-                      isSelectedColor != "unknown") ||
-                  item.colors.isEmpty) {
-                var data = await Add2Cart.readModelsFromFile();
-
-                if (data.isNotEmpty) {
-                  for (var items in data) {
-                    if (items.selectedColor != isSelectedColor &&
-                        items.image != item.featureImageUrl) {
-                      data.add(ProductModel(
-                          title: item.name,
-                          description: item.description,
-                          price: item.price,
-                          image: item.featureImageUrl,
-                          priceSign: item.currencySign,
-                          tagList: item.tagName,
-                          productType: item.type,
-                          productColors: item.colors,
-                          selectedColor: isSelectedColor,
-                          qty: quantity));
-                    }
-                  }
-                } else {
-                  data.add(ProductModel(
-                      title: item.name,
-                      description: item.description,
-                      price: item.price,
-                      image: item.featureImageUrl,
-                      priceSign: item.currencySign,
-                      tagList: item.tagName,
-                      productType: item.type,
-                      productColors: item.colors,
-                      selectedColor: isSelectedColor,
-                      qty: quantity));
-                }
-
-                Navigator.pushNamed(context, Routes.buyNowPage,
-                    arguments: data);
-              } else {
-                QuickAlert.show(
-                  context: context,
-                  type: QuickAlertType.warning,
-                  text: "Please Select The Color First!",
-                  confirmBtnText: "Okay",
-                  confirmBtnColor: Colors.red,
-                  customAsset:
-                      "assets/gif/Warning Anthony Anderson GIF by HULU.gif",
-                  title: "Warning",
-                );
-              }
-            },
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(),
-              backgroundColor: Colors.black,
-            ),
-            child: Text(
-              "Buy Now",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        )
-      ],
-    );
-  }
+  // static Widget bottomArea(
+  //     BuildContext context, ProductModel item, String isSelectedColor,
+  //     {int quantity = 1}) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       SizedBox(
+  //         width: MediaQuery.sizeOf(context).width * 0.60,
+  //         child: OutlinedButton(
+  //           onPressed: () async {
+  //             try {
+  //               if ((isSelectedColor == "unknown" &&
+  //                   item.productColors.isNotEmpty)) {
+  //                 QuickAlert.show(
+  //                   context: context,
+  //                   type: QuickAlertType.warning,
+  //                   text: "Please Select The Color First!",
+  //                   confirmBtnText: "Okay",
+  //                   confirmBtnColor: Colors.red,
+  //                   customAsset:
+  //                       "assets/gif/Warning Anthony Anderson GIF by HULU.gif",
+  //                   title: "Warning",
+  //                 );
+  //               } else {
+  //                 QuickAlert.show(
+  //                   context: context,
+  //                   type: QuickAlertType.success,
+  //                   text: "The item has been added to the cart",
+  //                   confirmBtnText: "Okay",
+  //                   confirmBtnColor: Colors.green,
+  //                   customAsset:
+  //                       "assets/gif/Turn Up Dancing GIF by Rosanna Pansino.gif",
+  //                   title: "Congratulations",
+  //                 );
+  //                 await Add2Cart.addToCart(item, isSelectedColor, quantity);
+  //               }
+  //             } catch (e) {
+  //               print(e);
+  //             }
+  //           },
+  //           style: OutlinedButton.styleFrom(
+  //             shape: RoundedRectangleBorder(),
+  //             backgroundColor: Colors.white,
+  //           ),
+  //           child: Text(
+  //             "Add to cart",
+  //             style: TextStyle(color: Colors.black),
+  //           ),
+  //         ),
+  //       ),
+  //       SizedBox(
+  //         width: MediaQuery.sizeOf(context).width * 0.30,
+  //         child: OutlinedButton(
+  //           onPressed: () async {
+  //             if ((isSelectedColor.isNotEmpty &&
+  //                     isSelectedColor != "unknown") ||
+  //                 item.productColors.isEmpty) {
+  //               var data = (await DatabasesHelper.dbHelper.readCart());
+  //
+  //               if (data.isNotEmpty) {
+  //                 for (var items in data) {
+  //                   if (items.selectedColor != isSelectedColor &&
+  //                       items.image != item.image) {
+  //                     data.add(ProductModel(
+  //                         id: item.id,
+  //                         title: item.title,
+  //                         description: item.description,
+  //                         price: item.price,
+  //                         image: item.image,
+  //                         priceSign: item.priceSign,
+  //                         tagList: item.tagList,
+  //                         productType: item.productType,
+  //                         productColors: item.productColors,
+  //                         selectedColor: isSelectedColor,
+  //                         qty: quantity));
+  //                   }
+  //                 }
+  //               } else {
+  //                 data.add(ProductModel(
+  //                     id: item.id,
+  //                     title: item.title,
+  //                     description: item.description,
+  //                     price: item.price,
+  //                     image: item.image,
+  //                     priceSign: item.priceSign,
+  //                     tagList: item.tagList,
+  //                     productType: item.priceSign,
+  //                     productColors: item.productColors,
+  //                     selectedColor: isSelectedColor,
+  //                     qty: quantity));
+  //               }
+  //
+  //               Navigator.pushNamed(context, Routes.buyNowPage,
+  //                   arguments: data);
+  //             } else {
+  //               QuickAlert.show(
+  //                 context: context,
+  //                 type: QuickAlertType.warning,
+  //                 text: "Please Select The Color First!",
+  //                 confirmBtnText: "Okay",
+  //                 confirmBtnColor: Colors.red,
+  //                 customAsset:
+  //                     "assets/gif/Warning Anthony Anderson GIF by HULU.gif",
+  //                 title: "Warning",
+  //               );
+  //             }
+  //           },
+  //           style: OutlinedButton.styleFrom(
+  //             shape: RoundedRectangleBorder(),
+  //             backgroundColor: Colors.black,
+  //           ),
+  //           child: Text(
+  //             "Buy Now",
+  //             style: TextStyle(color: Colors.white),
+  //           ),
+  //         ),
+  //       )
+  //     ],
+  //   );
+  // }
 
   static Future inputField(BuildContext context,
       {String title = "Contact Number",

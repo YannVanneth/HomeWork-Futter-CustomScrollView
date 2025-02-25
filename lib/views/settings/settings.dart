@@ -1,4 +1,5 @@
 // import 'package:custom_scroll_view/routes/routes.dart';
+import 'package:flutter_level_01/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatelessWidget {
@@ -69,7 +70,7 @@ class Settings extends StatelessWidget {
                 'My Orders',
                 style: TextStyle(fontSize: 20),
               ),
-              onTap: () {},
+              onTap: () => Navigator.pushNamed(context, Routes.myOrders),
             ),
             ListTile(
               leading: Icon(

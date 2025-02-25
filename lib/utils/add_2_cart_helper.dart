@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:custom_scroll_view/data/exports.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/product_model.dart';
@@ -48,26 +47,26 @@ class Add2Cart {
   }
 
   static Future<void> addToCart(
-      Product newModel, String selectedColor, int qty) async {
+      ProductModel newModel, String selectedColor, int qty) async {
     try {
       final rawData = await _readRawData();
 
       final existingIndex = rawData.indexWhere((item) =>
-          item['name'] == newModel.name &&
+          item['name'] == newModel.title &&
           item['selected_color'] == selectedColor);
 
       if (existingIndex != -1) {
         rawData[existingIndex]['quantity'] += qty;
       } else {
         rawData.add({
-          'name': newModel.name,
+          'name': newModel.title,
           'description': newModel.description,
           'price': newModel.price,
-          'api_featured_image': newModel.featureImageUrl,
-          'price_sign': newModel.currencySign,
-          'tag_list': newModel.tagName,
-          'product_type': newModel.type,
-          'product_colors': newModel.colors.map((color) {
+          'api_featured_image': newModel.image,
+          'price_sign': newModel.priceSign,
+          'tag_list': newModel.tagList,
+          'product_type': newModel.productType,
+          'product_colors': newModel.productColors.map((color) {
             return {
               'hex_value': color.hexValue,
               'colour_name': color.colorName,

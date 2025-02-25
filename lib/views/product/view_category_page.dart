@@ -1,5 +1,7 @@
-import 'package:custom_scroll_view/data/exports.dart';
+import 'package:flutter_level_01/data/exports.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+
+import '../../models/product_model.dart';
 
 class ViewCategoryPage extends StatefulWidget {
   const ViewCategoryPage({super.key});
@@ -11,15 +13,15 @@ class ViewCategoryPage extends StatefulWidget {
 class _ViewCategoryPageState extends State<ViewCategoryPage> {
   @override
   Widget build(BuildContext context) {
-    var filters = ModalRoute.of(context)?.settings.arguments
-        as List<Map<String, dynamic>>;
+    var filters =
+        ModalRoute.of(context)?.settings.arguments as List<ProductModel>;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: filters.isNotEmpty
-            ? Text(filters[0]['product_type'].toString())
+            ? Text(filters[0].productType)
             : Text("This Product Not found"),
         actions: [
           Padding(
@@ -41,16 +43,16 @@ class _ViewCategoryPageState extends State<ViewCategoryPage> {
                       crossAxisCount: 2,
                     ),
                     itemBuilder: (context, index) {
-                      var product = Product.fromJson(filters[index]);
+                      var product = filters[index];
                       return Bounceable(
                         onTap: () => Navigator.pushNamed(
                             context, Routes.detailProduct,
-                            arguments: Product.fromJson(filters[index])),
+                            arguments: filters[index]),
                         child: CustomWidgets.productCard(context,
-                            cardImage: product.featureImageUrl,
-                            title: product.name,
+                            cardImage: product.image,
+                            title: product.title,
                             description: product.description,
-                            price: "${product.currencySign}${product.price}"),
+                            price: "${product.priceSign}${product.price}"),
                       );
                     },
                   )

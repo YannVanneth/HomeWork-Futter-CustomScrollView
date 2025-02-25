@@ -1,12 +1,19 @@
-import 'package:custom_scroll_view/data/exports.dart';
-import 'package:custom_scroll_view/views/wishlist/wishlist_screen.dart';
+import 'package:flutter_level_01/data/exports.dart';
+import 'package:flutter_level_01/views/wishlist/wishlist_screen.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 
-// ignore: must_be_immutable
-class SearchScreen extends StatelessWidget {
-  SearchScreen({super.key, this.listProducts});
-  List<Product>? listProducts;
+import '../../models/product_model.dart';
 
+// ignore: must_be_immutable
+class SearchScreen extends StatefulWidget {
+  SearchScreen({super.key, this.listProducts = const []});
+  List<ProductModel> listProducts;
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,9 +22,9 @@ class SearchScreen extends StatelessWidget {
             child: CustomScrollView(
           slivers: [
             SliverList.separated(
-              itemCount: listProducts!.length,
+              itemCount: widget.listProducts.length,
               itemBuilder: (context, index) {
-                var product = listProducts![index];
+                var product = widget.listProducts[index];
                 return Bounceable(
                     onTap: () => Navigator.pushNamed(
                         context, Routes.detailProduct,
